@@ -1,0 +1,7 @@
+interface:
+  display_name: 'Development Testing'
+  short_description: 'Risk-based verification and meaningful regression tests'
+  default_prompt: 'Use $development-testing to plan verification before implementation, exercise the changed behavior, and report the evidence and remaining gaps.'
+
+policy:
+  allow_implicit_invocation: true

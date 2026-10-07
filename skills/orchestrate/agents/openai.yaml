@@ -1,0 +1,6 @@
+interface:
+  display_name: 'Orchestrate'
+  short_description: 'Coordinate isolated workers and reviewed integration'
+  default_prompt: 'Use $orchestrate to coordinate these tasks with isolated worktrees and verified results.'
+policy:
+  allow_implicit_invocation: true
