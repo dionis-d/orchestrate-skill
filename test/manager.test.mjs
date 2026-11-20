@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs, { mkdtemp, mkdir, writeFile, readFile, rm, access, symlink, utimes, stat, realpath } from 'node:fs/promises';
+import fs, { mkdtemp, mkdir, writeFile, readFile, rename, rm, access, symlink, utimes, stat, realpath } from 'node:fs/promises';
 import { syncBuiltinESMExports } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -276,6 +276,7 @@ test('manifest rename failure restores the skill for add, update, and remove', a
   await assert.rejects(manage({ ...options, command: 'add' }), /Injected manifest rename failure/);
   await assert.rejects(access(path));
   await assert.rejects(access(manifest));
+  await assert.rejects(access(join(f.root, 'custom')), { code: 'ENOENT' });
 
   fail = false;
   await manage({ ...options, command: 'add' });
@@ -344,4 +345,59 @@ test('backup cleanup failure warns and preserves committed add, update, and remo
     assert.match(message, /Injected backup cleanup failure/);
   }
   assert.equal(warn.mock.callCount(), 3);
+});
+
+test('a missing skill restored through a case alias keeps one ownership entry', async t => {
+  const f = await fixture(t);
+  const original = { ...f, command: 'add', skillsDir: 'Custom/skills' };
+  await manage(original);
+  if (!await stat(join(f.root, 'custom')).catch(error => { if (error.code !== 'ENOENT') throw error; })) {
+    return t.skip('Requires a case-insensitive fixture filesystem');
+  }
+  const moved = join(f.temp, 'moved');
+  await rename(join(f.root, 'Custom'), moved);
+
+  const result = await manage({ ...original, skillsDir: 'custom/SKILLS' });
+  assert.deepEqual(result, [{ name: 'demo', directory: 'Custom/skills/demo' }]);
+  const rows = await inspect(f.root, f.source);
+  assert.deepEqual(rows.map(({ directory, status }) => [directory, status]), [['Custom/skills/demo', 'current']]);
+  await manage({ ...f, command: 'update' });
+  await manage({ ...f, command: 'remove' });
+  await access(join(moved, 'skills/demo/SKILL.md'));
+  assert.deepEqual((await readLock(f.root)).entries, []);
+});
+
+test('rejected case aliases leave missing registered paths missing', async t => {
+  for (const [registered, skillsDir] of [
+    ['Custom/skills', 'custom/SKILLS/demo/new/child'],
+    ['Custom/demo/Inner', 'custom'],
+  ]) {
+    const f = await fixture(t);
+    await manage({ ...f, command: 'add', skillsDir: registered });
+    if (!await stat(join(f.root, 'custom')).catch(error => { if (error.code !== 'ENOENT') throw error; })) {
+      return t.skip('Requires a case-insensitive fixture filesystem');
+    }
+    await rename(join(f.root, 'Custom'), join(f.temp, 'moved'));
+    const manifest = join(f.root, '.workflow-skills-lock.json');
+    const original = await readFile(manifest, 'utf8');
+
+    await assert.rejects(manage({ ...f, command: 'add', skillsDir }), /overlap.*managed/i);
+    await assert.rejects(access(join(f.root, 'Custom')), { code: 'ENOENT' });
+    assert.equal(await readFile(manifest, 'utf8'), original);
+    assert.deepEqual((await inspect(f.root, f.source)).map(row => row.status), ['missing']);
+  }
+});
+
+test('a case alias cannot turn the missing manifest into a directory', async t => {
+  const f = await fixture(t);
+  await mkdir(join(f.root, 'CaseProbe'));
+  if (!await stat(join(f.root, 'caseprobe')).catch(error => { if (error.code !== 'ENOENT') throw error; })) {
+    return t.skip('Requires a case-insensitive fixture filesystem');
+  }
+
+  const skillsDir = '.Workflow-Skills-Lock.JSON/nested/skills';
+  await assert.rejects(manage({ ...f, command: 'add', skillsDir }), /overlap.*manifest/i);
+  await assert.rejects(access(join(f.root, '.workflow-skills-lock.json')), { code: 'ENOENT' });
+  await manage({ ...f, command: 'add', skillsDir: 'custom' });
+  assert.equal((await readLock(f.root)).entries.length, 1);
 });
