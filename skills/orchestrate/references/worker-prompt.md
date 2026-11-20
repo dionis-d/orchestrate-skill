@@ -1,25 +1,23 @@
 # Worker brief
 
-Replace fields with concrete values; omit irrelevant fields. Give each worker the complete brief.
+Fill the applicable fields with values from the target project's working context.
 
 ```text
-Task: <ticket or complete task and acceptance criteria>
-Instructions: <paths and relevant inherited rules>
-Worktree: <absolute path>
-Branch: <assigned branch>
-Baseline: <commit SHA>
-Scope: <files, behavioral boundaries, dependencies>
-Resources: <ports / disposable database / temporary namespace>
-Verification: <commands, working directories, prerequisites, expected behavior>
-Endgame: <local commits or explicitly authorized push/draft PR>
+Task and acceptance criteria: <one bounded implementation task>
+Project instructions: <relevant instructions and compatible phase skills>
+Assigned workspace, branch, and baseline: <verified workspace and revision>
+Writable scope and dependencies: <files, behavior, dependencies>
+Resources: <isolated fixtures, namespaces, and reserved shared resources>
+Verification: <focused checks and applicable requirements for local handoff>
+Authorized actions: <explicit worker transitions and side effects>
 
-Implement only in the assigned worktree and branch. Preserve unrelated work.
-Report cross-worker scope/resource dependencies before touching them. Discover
-setup from repository instructions; do not copy secrets. Test acceptance behavior.
-Commit intended changes when authorized; report remaining dirty/ignored artifacts.
-Do not merge branches or administer sibling worktrees. Publishing is limited to
-the explicit endgame above.
+Verify the workspace and branch before writing or running checks. Work within
+the assigned scope. Report cross-worker dependencies before touching shared
+resources. Use documented disposable fixtures and authorized access.
 
-Return: done/blocked and reason; behavior changed; commit hashes; commands actually
-run and results; missing evidence; unresolved findings; PR URL when applicable.
+Return the candidate revision, behavior changed, checks and results, where
+they ran, relevant environment and fixture details, and remaining evidence
+or scope gaps. Identify dirty or ignored artifacts relevant to handoff.
 ```
+
+The coordinator handles integration, independent review, the final integrated gate, and external delivery. Assign an exception only for a specific phase or check the worker is authorized to perform.

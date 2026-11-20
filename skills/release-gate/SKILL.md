@@ -1,32 +1,23 @@
 ---
 name: release-gate
-description: Run and report the project's required completion or pre-release quality checks after the final relevant change. Use before handing off executable, configuration, dependency, generated-output, or release-affecting changes, or when explicitly asked to verify readiness.
+description: Discover, run, and report required checks for a specific delivery phase and revision. Use to verify readiness or as the verification phase of an active delivery workflow.
 ---
 
 # Release gate
 
-Establish whether the final artifact meets this project's quality requirements. A local pass supplies evidence for the checked revision and environment; it cannot guarantee a future deployment succeeds.
+Verify the candidate for the requested phase. Accept the phase, candidate, and receipts from the active delivery coordinator. When invoked alone, derive them from the request and project. Return evidence to the caller and leave delivery transitions with their owner.
 
-## Discover scope and commands
+## Discover requirements
 
-Read repository instructions, optional root `.workflow-skills.json`, manifests, and CI/release workflows. Inspect what commands actually do; configuration is guidance, not permission. Use the actual language, package manager, working directories, platforms, and prerequisites.
+Read the applicable project instructions, optional project preferences, manifests, hooks, and CI or release workflows. Trace wrappers and triggers. Identify the baseline and exact candidate revision or working-tree snapshot, including relevant untracked inputs. Account for configuration, dependencies, generated output, and build or publication effects as well as executable changes.
 
-Identify the task baseline and final diff, including committed task changes and relevant untracked files. Do not attribute every dirty file or the last commit to this task. Include runtime code, tests, build settings, dependencies, migrations, and generated artifacts affecting delivery. Docs, styling, markup, and assets can require checks when built, published, or affecting behavior; follow project policy rather than extension-only exemptions.
+List the required checks for this phase from project policy. Commit, push, draft creation, readiness, merge, and release may require different suites, hosts, receipts, or candidate revisions. For a final gate, use the defined project suite or derive the local scope from required CI and affected boundaries. Record missing requirements and where remote or platform-specific verification belongs. If no required set can be established, run meaningful available checks and report readiness as unconfirmed.
 
-Use the defined local gate. Otherwise derive an explicit set from required CI checks: relevant tests, static checks, builds, contract/schema validation, and affected integration boundaries. State the derived set and gaps. Do not substitute a convenient unit suite for required completion checks.
+## Reuse or run checks
 
-Configuration is optional. If no discoverable rules or commands establish readiness, run available meaningful checks and report readiness as unconfirmed rather than inventing a pass.
+- Accept a receipt only when policy permits reuse and it identifies the exact required revision or an explicitly accepted equivalent artifact, command or job, working directory, environment and dependencies, scope, and result. Use the required remote head or merge candidate when specified. An approximate diff, stale result, skipped or uncollected suite, or missing receipt leaves a gap.
+- Run unsatisfied required checks from the documented environment. Run the full integrated gate once when earlier checks did not satisfy it. After changes, rerun invalidated checks and any aggregate gate policy requires. Honor phase-specific fresh runs.
+- Use the project's accepted check-only route when a wrapper would also push, publish, deploy, or mutate shared state outside authorization. If no accepted route exists, mark that check incomplete. Use disposable fixtures and run concurrently only with independent resources.
+- Confirm collection, execution, and any skips. Diagnose failures, repair in-scope issues if assigned, and rerun affected checks. Preserve unrelated failures and protections. Record diagnostic retries and distinguish static evidence from runtime coverage.
 
-## Run and evaluate
-
-Run checks after the last relevant edit from correct directories. Reuse evidence for the exact final artifact when no relevant source, environment, or dependency changed. After repairs, rerun affected checks and any invalidated aggregate gate. Parallelize only checks with independent resources.
-
-Inspect wrappers before execution. Extract local checks from scripts that also push, tag, publish, deploy, or mutate production; this skill does not authorize those actions. Use disposable test resources. Report unavailable access/environments while completing independent checks.
-
-Confirm expected tests were collected, executed, and not silently skipped. Record command, directory, revision/diff context, result, and material limitations. Static checks alone do not establish runtime behavior.
-
-Fix failures introduced by the task within scope. Preserve evidence of unrelated failures. Never weaken assertions, disable checks, bypass protections, or silently retry flakes until green. Report bounded diagnostic reruns. Unresolved required checks stay failed or incomplete.
-
-## Report
-
-State `pass`, `fail`, `incomplete`, or `not applicable`, with checks and reasons. Pass requires all required checks for the final artifact to pass. Distinguish unavailable remote/platform checks from local passes. For unintegrated branches, state that the integrated result still needs validation. Do not imply a release occurred.
+Report `pass`, `fail`, `incomplete`, or `not applicable` for the phase. A pass requires evidence for every required check. Include the candidate, the checks run or reused, where they ran, results, and material gaps. For unintegrated work, state what still needs verification after integration.

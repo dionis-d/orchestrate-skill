@@ -1,43 +1,38 @@
 ---
 name: ship-change
-description: Take a repository change from request through implementation, independent review, and verified delivery. Use when asked to ship a change, prepare a verified PR, or coordinate a complete delivery workflow.
+description: Coordinate one repository change through implementation, fresh independent review, and verified delivery. Use to ship a change or prepare a verified PR when no delivery workflow already owns the task.
 ---
 
 # Ship a change
 
-Use one short-lived branch and one PR per independently shippable slice where the project uses PRs. The parent owns scope, integration, and delivery. Scale planning and verification to the change's impact and recovery cost. This entrypoint works on its own.
+Own one shippable slice and its authorized endpoint. In BB, use the existing parent thread or coordinating session and its native tools. When a project workflow or parent already owns delivery, follow that coordinator and contribute only the assigned phase. Select one end-to-end workflow per slice. Use other skills for bounded phases, without handing them the delivery lifecycle or starting a second harness.
 
 ## Discover the delivery rules
 
-Read the task, applicable repository instructions, current branch and working-tree state. Find the intended base and record the starting revision. Preserve unrelated work. Consult optional `.workflow-skills.json` for defaults and use the project's tracked instructions, scripts, hooks, and workflows to verify those defaults.
+Read the request, active project instructions, repository state, and available skills. Record the comparison base, acceptance criteria, and authorized endpoint. Verify optional project preferences against applicable instructions, scripts, hooks, and workflows. Keep project-specific details in the working context and evidence for authorized recipients.
 
-Identify what must pass **before each applicable transition**: commit, push, PR creation, merge, and release. Trace commands to see which checks they run, what host and fixtures they require, and what they publish or deploy. Check triggers for the intended branch, including deploy-on-merge and branch previews. The user's request and standing authorization set the delivery scope. Repository rules may require additional checks or an authorized human operator. An absent local policy or an available credential grants no authority.
+Identify requirements before each applicable transition: local commit, push, draft creation, ready for review, merge, and release. Record which checks and reviews are required when, which revision they cover, the required environment, and any required receipt or human approval. Order review, gate runs, and delivery actions around these prerequisites. Read wrappers and remote triggers before running anything that might publish, deploy, alter shared data, or notify others. Use disposable fixtures and keep production credentials outside worker and test environments.
 
-Give workers and verification jobs only the access they need. Use disposable data and isolated execution for untrusted code, with production credentials out of those environments.
+## Implement and integrate
 
-## Plan and implement
+Assign one implementation owner for a small change. For a larger slice, delegate one bounded task per worker with its baseline, workspace, writable scope, acceptance criteria, resources, and evidence to return. If installed, use the isolation and worker guidance in `orchestrate` as a phase of this run. Use native worktrees or environments when provided, validate their paths and branches, and serialize work that shares files or fixtures. Work sequentially when delegation or requisite isolation is unavailable.
 
-- **Clear change:** write or extract brief acceptance criteria and identify the cheapest meaningful check through the affected behavior. A small task needs one implementation owner.
-- **Uncertain design or dependent work:** answer material design questions first. Split larger work into independently verifiable slices and record blockers. Keep each parent thread or coordinating session responsible for one shippable slice. A worker gets one task, its base, acceptance criteria, boundaries, and required evidence.
-- **Bug:** reproduce the reported symptom through the affected path. Where faithful automation is practical, make the regression check fail for that reason before fixing it.
+Use the target project's compatible diagnosis skill for uncertain bugs, TDD for requested or applicable test-first work, and changed-code tools for risks they can evaluate. Give each a phase result to produce. Use `development-testing` for risk selection when available. Without these skills, reproduce bugs through the affected path, use existing or focused regression and boundary checks, and inspect the changed code and affected consumers directly.
 
-Use isolated worker branches and worktrees when delegation is authorized and supported. Run only unblocked tasks in parallel and serialize tasks or checks that contend for files, fixtures, ports, or machine-wide locks. When worker isolation is unavailable, work sequentially within the authorized scope. Integrate completed work as dependencies allow.
+Workers run focused acceptance checks and any checks required for their own authorized transitions. They return the revision, evidence, and gaps. The coordinator integrates in dependency order, verifies conflicts and affected boundaries, and owns the full gate for the integrated artifact. Keep outgoing changes scoped and inspect them for sensitive material before any authorized push.
 
-Commit coherent changes. Before every push, including checkpoints, inspect outgoing commits for secrets and unrelated changes. Push meaningful checkpoints to approved feature branches when permitted, after their applicable gates.
+## Review and verify
 
-Run focused checks while implementing. Use existing behavioral coverage where it proves the acceptance criteria. Add boundary, failure, and recovery checks for changes affecting authentication, permissions, sensitive data, data integrity, migrations, concurrency, or release infrastructure. For risky changes, agree on how to detect failure and recover, and involve the required owner or human reviewer before an irreversible transition.
+Arrange fresh independent review of the integrated change through a compatible project review skill or a native independent reviewer. In BB, use a fresh reviewer thread when authorized and available. Supply a fixed base and candidate revision, request and acceptance criteria, applicable standards, and evidence. Ask for findings about correctness, scope, and changed failure paths. Reviewers should inspect the candidate without editing it or performing delivery actions. Use the required native or provider review route when specified. Reuse that review when it covers the same candidate and criteria. Add another review only for a distinct requirement or uncovered scope.
 
-## Review and verify the integrated change
+Fix material findings and get independent verification of the affected fixes on the revised candidate. If fresh independent review is unavailable, inspect the diff directly and report independent review as pending. Pause any transition that requires it.
 
-Give an independent reviewer who did not author the change the base, integrated revision, acceptance criteria, and project standards. Have them check behavior against the request, repository standards, and the changed failure paths. Fix material findings and have the reviewer verify the fixes. Review substantive changes made after review, including conflict resolutions. If no independent reviewer is available, inspect the diff yourself and mark independent review pending. Stop before any transition that requires it.
-
-Run each required gate at its prescribed stage, including pre-PR checks for drafts when applicable. Keep one set of full checks for the integrated result by default, reusing valid evidence when the project permits it. Rerun invalidated checks after changes and honor policies that require separate runs at different stages. Match evidence to the revision and environment actually checked, including the merge candidate when required. A skipped test, a missing receipt, or a deployment-only workflow supplies no passing test evidence.
-
-Use protected CI as the final merge gate where available and configured. Run any required local checks on the documented host and retain their logs or receipts. If a wrapper also performs a release or any other action outside the authorized scope, run its check-only portion when the repository accepts that evidence. If the required check cannot be separated on those terms, report the gate as blocked. Preserve project hooks and branch rules. Report required checks blocked by missing access, fixtures, or platforms as incomplete.
+Use `release-gate` for the required verification phase when installed, or run the project-defined checks directly. Default to one full gate on the final integrated candidate. Run any earlier required checks at their prescribed phase, even if that policy requires another run later. Reuse a receipt only if project policy accepts it and the exact revision or explicitly accepted artifact identity, check scope, dependencies, environment, and results match the requirement. Changes invalidate affected evidence. Verify the actual PR head or merge candidate when required.
 
 ## Deliver within scope
 
-- Open the PR when authorized and the repository's creation requirements are met. Use an early draft only when the project and user allow it and doing so starts useful checks or feedback. Before marking it ready, verify applicable review and gate requirements. Include acceptance evidence, material gaps, and recovery considerations where relevant.
-- Treat merge and deployment as separately authorized actions. When a merge or push triggers a release, the action also needs authorization for that release. Follow the project's deployment policy and respect human-only release steps. Keep any verification stopped by an external dependency visible in the handoff.
+Open a draft only if authorized, creation requirements are satisfied, and the draft enables required checks or useful feedback. If independent review requires a PR, meet its creation prerequisites, open an authorized draft where allowed, and obtain that review against the PR head before advancing. Use the project-accepted local review route if a PR-based review is unavailable within scope. When policy requires review before creation, arrange it on the local candidate first. Use an installed PR skill for the required PR preparation or operation only. As a fallback, prepare the scope, evidence, gaps, and relevant recovery details directly.
 
-Finish with the delivered revision or PR, the checks and review actually completed, and any outstanding requirement. If the requested endpoint is blocked, complete the safe work that can proceed and state the exact blocker. For follow-up issues, follow the project's tracker conventions and existing authorization.
+Before marking ready, merging, or releasing, confirm the applicable review and checks for that transition. Keep required protections and human-only steps in place. Treat pushes, PR operations, tracker writes, merges, deployments, and shared-state changes as scoped side effects. A push or merge that automatically deploys also requires authorization for the triggered deployment. If a required wrapper has side effects outside that scope, use a project-accepted check-only path or report the blocked requirement.
+
+Report the delivered revision or PR, review outcome, checks actually completed, and outstanding requirements. Continue authorized work that can proceed when another phase is blocked.

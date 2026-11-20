@@ -92,7 +92,15 @@ Choose the skill that matches the task. `ship-change` contains the complete work
 | Develop or review a behavior change | “Use development-testing to verify this fix, including a regression for the reported failure.” |
 | Check the final result | “Use release-gate to run this project's required checks and report any missing evidence.” |
 
-Include acceptance criteria and relevant task paths. Skills follow project instructions and discover the project's commands. If the harness cannot run isolated workers, orchestration runs sequentially. A skill can report blocked or incomplete verification when a required service or platform is unavailable.
+### How the skills work together
+
+Use one delivery coordinator per change. In BB, keep coordination in the active parent thread and use native worker and review capabilities when available and authorized. If an installed project workflow already owns delivery, give it focused help from these skills. Use the project's applicable diagnosis, TDD, changed-code, review, and PR skills for individual phases. Every entrypoint also provides a direct approach when companion skills or native tools are unavailable.
+
+Give each worker one task, an assigned workspace and baseline, acceptance criteria, and focused checks. Separate writable workspaces and test resources. Serialize work that shares writable fixtures or other resources that cannot be isolated. Workers return their revisions, check results, and gaps. The coordinator integrates the work, arranges fresh independent review, and owns the full integrated gate. When independent review is unavailable, report it as pending and hold any transition that requires it.
+
+The project determines what must pass before each commit, push, draft, readiness update, merge, or release. Earlier required checks still run at the prescribed phase. Reuse evidence only when the project accepts it for the exact candidate, check scope, and environment. An authorized draft can enable CI or native review after its creation prerequisites pass. Confirm the required review and checks on the current candidate before advancing it.
+
+Use disposable test resources and inspect scripts and remote triggers before actions with side effects. Publishing, PR operations, merges, deployment, and changes to shared services need authorization for their effects. If a required check cannot run safely within scope, report the missing evidence.
 
 ## 5. Update or remove copies
 
