@@ -1,20 +1,24 @@
-# Route a phase
+# Select a specialist
 
-Use one route at a time per applicable phase and keep delivery with the active coordinator.
+1. If the evidence from the phase owner meets the requirement for this candidate and step, use it.
+2. If a requirement has no applicable evidence, use the procedure that the repository specifies for that requirement.
+3. For work without an owner or a required procedure, use one suitable specialist at a time.
+4. If a specialist is not necessary, do the work directly.
+5. Load a skill only through a method that the client permits.
+6. Use a manual-only skill only at the user's request.
+7. If you cannot use a mandatory procedure, record the missing evidence.
+8. Wait before a step that depends on that procedure.
 
-1. Reuse qualifying evidence and the current phase owner or route when it covers the work and satisfies repository policy. Follow the repository-required route when specified, including native review or repository checks. Identify any uncovered or unmet requirement before assigning more work.
-2. For an unassigned phase, check the skills and native capabilities exposed by the current client. Choose at most one available specialist by its advertised capability, compatibility with the repository and phase, and authorization. Use the direct approach for a narrow phase when a specialist adds no value and policy permits. The names below are examples. Skip disabled skills and use manual-only skills only when explicitly invoked by the user and permitted by the client.
-3. Use the client's supported skill loader or, where supported, read the selected skill's client-exposed, authorized `SKILL.md` path. If neither is available, use the direct phase approach. Do not guess paths or tool names, bypass invocation restrictions, or install missing skills.
-4. Bound each handoff to one phase. Give the specialist the objective, applicable repository rules, fixed baseline or candidate, workspace, permissions, acceptance criteria, and existing evidence. Ask for results, the covered revision, evidence, and gaps. Keep integration and delivery transitions with the coordinator. Use returned evidence in the existing review and verification steps.
+Use the capabilities that the client shows to select a skill. Use these examples as a guide.
 
-| Phase | Capability and example | Direct approach |
+| Phase | Capability | Example |
 | --- | --- | --- |
-| Diagnosis of an uncertain failure | Reproduce and isolate the cause, e.g. `diagnosing-bugs` | Reproduce through the affected path and confirm the cause. |
-| Requested or applicable test-first work | Develop behavior against a focused failing test, e.g. `tdd` | Add a focused failing test and verify it passes with the fix. |
-| Implementation and integration | Isolate and coordinate bounded workers when needed, e.g. `orchestrate` | Implement and integrate in the current coordinator using the entrypoint's workspace rules. |
-| Change-focused testing and analysis | Select checks for changed behavior and risks, e.g. `development-testing` or repository-prescribed changed-code analysis tools | Inspect affected consumers and use applicable static, regression, and boundary checks. |
-| Independent review | Review a fixed candidate against the request and standards, e.g. `code-review` or a native reviewer | Use authorized native independent review where available. Otherwise follow the entrypoint's pending-review procedure. |
-| Required verification | Run or verify required checks, e.g. repository commands, CI, or `release-gate` for unmet verification needs | Run applicable authorized repository checks and record evidence using the entrypoint's receipt rules. |
-| PR preparation | Draft the PR body using project conventions, e.g. `pr` | Prepare scope, evidence, gaps, and recovery details. The coordinator handles authorized PR operations through the repository or provider interface. |
+| Defect diagnosis | Reproduce the failure and find its cause | `diagnosing-bugs` |
+| Test-first development | Make a test that fails before the fix | `tdd` |
+| Parallel work | Assign independent tasks and integrate the results | `orchestrate` |
+| Tests for the change | Select tests that detect the failures that can occur | `development-testing` |
+| Independent review | Examine a fixed revision against the request and rules | `code-review` |
+| Required checks | Run checks or verify the test evidence | `release-gate` |
+| PR text | Prepare the PR text | `pr` |
 
-Direct work can proceed where authorized. If a mandatory route or its evidence is unavailable, record the missing requirement and hold the dependent transition until policy is satisfied.
+Give the specialist one phase, its scope, the applicable rules, the revision, the workspace, and available evidence. Give the specialist the operations with approval. Tell the specialist to give you the result, evidence, and missing items. Keep delivery with the coordinator.

@@ -93,13 +93,15 @@ Clients that allow automatic skill activation may choose `ship-change` for match
 
 ### How the skills work together
 
-Use one delivery coordinator per change. In BB, keep coordination in the active parent thread and use native worker and review capabilities when available and authorized. If an installed project workflow already owns delivery, give it focused help from these skills. `ship-change` uses the active or repository-required route where applicable and selects an available specialist by capability for an unassigned phase. It provides direct steps for standalone use.
+Use one delivery coordinator per change. In BB, keep coordination in the parent thread. If an active project workflow owns delivery, use the skills for the assigned work. `ship-change` uses the repository's procedure first and can select a compatible specialist for an unassigned phase.
 
-Give each worker one task, an assigned workspace and baseline, acceptance criteria, and focused checks. Separate writable workspaces and test resources. Serialize work that shares writable fixtures or other resources that cannot be isolated. Workers return their revisions, check results, and gaps. The coordinator integrates the work, arranges fresh independent review, and owns the full integrated gate. When independent review is unavailable, report it as pending and hold any transition that requires it.
+Give each worker one task, an isolated writable workspace, a base revision, and focused checks. Do work that shares writable resources in sequence. The coordinator integrates the work and gets independent review when rules or risk make it necessary. If you cannot get that review, record the gap and wait before a step that requires it.
 
-The project determines what must pass before each commit, push, draft, readiness update, merge, or release. Earlier required checks still run at the prescribed phase. Reuse a qualifying receipt directly from the owner of the check phase when it meets project requirements for the exact candidate, check scope, and environment. Where policy requires clean committed verification, record HEAD and checkout cleanliness at test start, including relevant untracked or generated inputs, and confirm both before creating a draft or regular PR. An authorized draft can enable CI or native review after its creation prerequisites pass. Confirm the required review and checks on the current candidate before advancing it.
+The project specifies when checks must pass. Reuse evidence only when the project accepts it for the candidate and environment. The [candidate checks](../skills/ship-change/references/verification.md) describe what to do if a project requires a test on a clean commit before opening a PR.
 
-Use disposable test resources and inspect scripts and remote triggers before actions with side effects. Publishing, PR operations, merges, deployment, and changes to shared services need authorization for their effects. If a required check cannot run safely within scope, report the missing evidence.
+Use disposable test resources. Examine scripts and remote triggers before actions that can affect other systems. Get approval for merge and deployment.
+
+Use [ASD-STE100 Issue 9](../skills/ship-change/references/technical-english.md) for new or changed English technical text when the repository and user permit it. Keep required templates, commands, names, and quotations.
 
 ## 5. Update or remove copies
 

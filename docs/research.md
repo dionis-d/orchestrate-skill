@@ -15,7 +15,7 @@ Researched 2026-10-07. Sources below are primary project documentation, not thir
 
 Four independently installable skills cover delivery coordination, worker orchestration, focused testing, and phase-specific verification. Each has portable instructions and optional OpenAI display metadata. Repository command and environment discovery lets the same skills work across projects.
 
-The orchestration entrypoint uses a short workflow plus capability guidance and a worker brief. Base branch, ticket format, concurrency, ports, and model selection come from the target project and available tools. Environment files are not copied automatically, and no external workflow skill is required. One delivery coordinator owns the integrated review and gate. Workers return focused acceptance evidence. Compatible installed skills can supply individual phases, and native harness tools can supply isolation and independent review. Material review findings must be resolved before the reviewed result advances.
+The orchestration entrypoint covers worker setup and integration. A worker brief records the workspace, scope, and expected result. One delivery coordinator owns the integrated checks. Independent review is necessary when project rules or risk call for it. Available client tools can supply isolation and review.
 
 The release gate discovers required project checks rather than assuming a package manager, language, directory layout, or fixed command. It includes build/config/dependency risks and distinguishes pass/fail/incomplete/not-applicable evidence. A local pass does not guarantee a successful production release.
 
@@ -26,3 +26,7 @@ The standard skills CLI provides ecosystem-compatible distribution. The addition
 Copies work without Windows link privileges and remain portable when a source checkout moves. Hashes cover file names and bytes, enabling refusal of changed or unmanaged destinations. Preflight validates the full selected batch before writing. Exclusive mutation guards avoid competing installer writers, and staging prevents partially copied entrypoints being mistaken for a finished installation. There is no full multi-directory rollback or automatic crash recovery; documentation states that limit.
 
 Tests exercise actual filesystem/CLI outcomes. They validate installer guarantees, not agent compliance with prose. Cross-harness session evaluation and remote GitHub distribution are not claimed merely because local validation passes.
+
+## Skill text
+
+The skill text uses [ASD-STE100 Issue 9](https://www.asd-ste100.org/assets/files/ASD-STE100_ISSUE9.pdf). This standard specifies approved words and permits technical terms from the subject field. The skills apply it to new or changed English technical text in the task scope, subject to the user's and repository's output requirements.

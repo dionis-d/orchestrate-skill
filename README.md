@@ -5,7 +5,7 @@ Reusable agent skills for delivering changes across projects and technology stac
 | Skill | Use it to |
 | --- | --- |
 | `ship-change` | Implement, independently review, and verify a change through the project's delivery process |
-| `orchestrate` | Coordinate isolated workers, review results, and integrate authorized changes |
+| `orchestrate` | Assign independent tasks to workers and integrate the results |
 | `development-testing` | Choose meaningful checks based on the change's risks |
 | `release-gate` | Verify a specific candidate against the checks required for its delivery phase |
 
@@ -59,7 +59,7 @@ No configuration is required. Skills discover repository instructions, commands,
 node bin/workflow-skills.mjs init --project ../my-project
 ```
 
-Workers run focused checks in isolated workspaces. The coordinator owns independent review and the full integrated gate. See [how the skills work together](docs/guide.md#how-the-skills-work-together) for phase-specific checks, draft PRs, and reuse of verification evidence.
+Workers run focused checks in isolated workspaces. The coordinator handles independent review when policy or risk calls for it and verifies the integrated result. See [how the skills work together](docs/guide.md#how-the-skills-work-together).
 
 ## Contributing
 
@@ -71,3 +71,5 @@ npm pack --dry-run
 ```
 
 Tests use disposable temporary projects. They check installer behavior; they do not prove agent behavior in every harness. See [design decisions and primary sources](docs/research.md). Licensed under [MIT](LICENSE).
+
+Use ASD-STE100 Issue 9 when you change the skills. Check the approved words, technical terms, and sentence rules against the [writing reference](skills/ship-change/references/technical-english.md).
