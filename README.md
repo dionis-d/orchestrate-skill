@@ -1,6 +1,6 @@
 # Workflow skills
 
-Reusable agent skills for delivering changes across projects and technology stacks. Use `ship-change` to coordinate delivery, or install any focused skill on its own. In BB or a project with an active delivery workflow, give the existing coordinator the focused phase and keep one delivery workflow per change.
+Reusable agent skills for delivering changes across projects and technology stacks. Install `ship-change` for the complete delivery workflow. The other three skills are optional and can be installed on their own. In BB or a project with an active delivery workflow, give the existing coordinator the focused phase and keep one delivery workflow per change.
 
 | Skill | Use it to |
 | --- | --- |
@@ -14,10 +14,10 @@ Reusable agent skills for delivering changes across projects and technology stac
 Open a terminal in the project where you want the skills installed, then run:
 
 ```sh
-npx skills@latest add dionis-d/orchestrate-skill
+npx skills@latest add dionis-d/orchestrate-skill --skill ship-change
 ```
 
-Select the skills and your agent at the prompts, then restart or refresh the agent. You do not need to clone the repository first. The [skills CLI](https://github.com/vercel-labs/skills) supports Codex, Claude Code, and OpenCode; use the local installer below for ZCode.
+Select your agent at the prompts, then restart or refresh the agent. You do not need to clone the repository first. The [skills CLI](https://github.com/vercel-labs/skills) supports Codex, Claude Code, and OpenCode; use the local installer below for ZCode.
 
 Manage this installation with `npx skills@latest list`, `npx skills@latest update`, and `npx skills@latest remove`. Use the same manager that installed the skills.
 
@@ -30,10 +30,10 @@ Requires Node.js 22 or newer and Git to clone the repository. Replace `../my-pro
 ```sh
 git clone https://github.com/dionis-d/orchestrate-skill.git workflow-skills
 cd workflow-skills
-node bin/workflow-skills.mjs add --project ../my-project
+node bin/workflow-skills.mjs add --project ../my-project --skill ship-change
 ```
 
-Select the skills and agents you want, review the destinations, then type `yes` to install. Press Enter at the selection prompts to choose all skills and the four supported harnesses (Codex, Claude Code, ZCode, and OpenCode). Restart or refresh your agent afterward.
+Select the agents you want, review the destinations, then type `yes` to install. Restart or refresh your agent afterward.
 
 Confirm installation:
 
@@ -41,7 +41,7 @@ Confirm installation:
 node bin/workflow-skills.mjs list --project ../my-project
 ```
 
-Then ask your agent to use a skill, for example:
+Clients that allow automatic skill activation may select `ship-change` for matching requests. To invoke it explicitly, ask:
 
 ```text
 Use ship-change to implement this fix and prepare a verified pull request.
