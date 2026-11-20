@@ -1,0 +1,6 @@
+interface:
+  display_name: 'Ship a Change'
+  short_description: 'Implement, review, and deliver with project-specific checks'
+  default_prompt: 'Use $ship-change to implement this request and verify it through the authorized delivery stage.'
+policy:
+  allow_implicit_invocation: true

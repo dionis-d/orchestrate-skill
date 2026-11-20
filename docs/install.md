@@ -1,6 +1,6 @@
 # Install the skills in a project
 
-This guide installs `orchestrate`, `development-testing`, and `release-gate` for Codex, Claude Code, ZCode, or OpenCode. No project configuration is required.
+This guide installs workflow skills for Codex, Claude Code, ZCode, or OpenCode. Choose `ship-change` for the complete workflow. No project configuration is required.
 
 ## Fastest option: one command
 
@@ -12,7 +12,7 @@ npx skills@latest add dionis-d/orchestrate-skill
 
 Choose your skills and agent at the prompts, then restart or refresh the agent. This command downloads the skills directly; you can skip the cloning steps below.
 
-To install all three skills for Codex without prompts:
+To install all skills for Codex without prompts:
 
 ```sh
 npx --yes skills@latest add dionis-d/orchestrate-skill --skill '*' --agent codex --yes
@@ -64,7 +64,7 @@ Replace `../my-project` with your project's actual relative or absolute path. Ke
 
 ## 4. Answer the installer prompts
 
-1. **Skills:** press Enter to install all three, or type names separated by commas, such as `development-testing,release-gate`.
+1. **Skills** — press Enter to install all skills, or type a selection such as `ship-change`.
 2. **Agents:** type the agent you use from the table below. For several agents, separate their names with commas. Press Enter to select all four.
 3. **Confirmation:** check that the displayed paths belong to the intended project, then type `yes`.
 

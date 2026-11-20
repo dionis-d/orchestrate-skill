@@ -132,16 +132,26 @@ test('exclusive install guard refuses concurrent writes', async t => {
   assert.equal(await readFile(join(f.root, '.workflow-skills-installing'), 'utf8'), 'other process');
 });
 
-test('real CLI installs all three skills, checks them, and removes a selected skill', async t => {
+test('real CLI installs all four skills, checks them, and removes a selected skill', async t => {
   const f = await fixture(t);
   const cli = resolve('bin/workflow-skills.mjs');
   await exec(process.execPath, [cli, 'add', '--project', f.root, '--agent', 'codex,zcode', '--yes']);
   const rows = await inspect(f.root, sourceRoot);
-  assert.equal(rows.length, 6);
+  assert.equal(rows.length, 8);
   assert.ok(rows.every(row => row.status === 'current'));
   await exec(process.execPath, [cli, 'check', '--project', f.root]);
   await exec(process.execPath, [cli, 'remove', '--project', f.root, '--skill', 'orchestrate', '--yes']);
-  assert.equal((await inspect(f.root)).length, 4);
+  assert.equal((await inspect(f.root)).length, 6);
+});
+
+test('real CLI installs ship-change by itself into a BB skill directory', async t => {
+  const f = await fixture(t);
+  const cli = resolve('bin/workflow-skills.mjs');
+  await exec(process.execPath, [cli, 'add', '--project', f.root, '--skills-dir', '.bb/skills', '--skill', 'ship-change', '--yes']);
+  const rows = await inspect(f.root, sourceRoot);
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].directory, '.bb/skills/ship-change');
+  assert.equal(rows[0].status, 'current');
 });
 
 test('CLI fails on missing option values, conflicting scope, and unexpected input', async () => {

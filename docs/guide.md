@@ -40,7 +40,7 @@ node bin/workflow-skills.mjs add --project ../my-project
 
 The installer asks for:
 
-1. Skill names: accept all three or enter a comma-separated subset.
+1. Accept all skills or enter a comma-separated subset.
 2. Agents: accept all four or enter a comma-separated subset.
 3. Confirmation: inspect the displayed destinations, then type `yes` to apply.
 
@@ -83,10 +83,11 @@ Codex and OpenCode share a single copy. OpenCode also reads Claude-compatible di
 
 ## 4. Use the skills
 
-Choose the skill that matches the task. You do not have to run all three in sequence.
+Choose the skill that matches the task. `ship-change` contains the complete workflow in a single install.
 
 | Task | Example request |
 | --- | --- |
+| Deliver a change from request through verification | “Use ship-change to implement this fix and prepare a verified PR.” |
 | Implement several independent tasks | “Use orchestrate for these tickets. Keep reviewed branches local for now.” |
 | Develop or review a behavior change | “Use development-testing to verify this fix, including a regression for the reported failure.” |
 | Check the final result | “Use release-gate to run this project's required checks and report any missing evidence.” |
@@ -133,6 +134,14 @@ node bin/workflow-skills.mjs list --global
 ```
 
 Use `--global` consistently for checking, updating, and removing those copies. Codex/OpenCode use `~/.agents/skills`, Claude Code uses `~/.claude/skills`, and ZCode uses `~/.zcode/skills`. Local user directories are not automatically available in remote or cloud workspaces.
+
+**BB across projects.** From the skills clone, install into BB's default user skills directory:
+
+```sh
+node bin/workflow-skills.mjs add --global --skills-dir .bb/skills --skill ship-change
+```
+
+Start a new BB thread in any project and select `/ship-change`. If your BB data directory is customized, use `--project <BB-data-directory> --skills-dir skills` in place of `--global --skills-dir .bb/skills` and use that `--project` path to manage the copy.
 
 **Another harness.** Choose its documented discovery directory:
 

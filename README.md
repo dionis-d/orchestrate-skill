@@ -1,9 +1,10 @@
 # Workflow skills
 
-Reusable agent skills for planning implementation, testing behavior, and checking delivery readiness. They work independently across projects and technology stacks.
+Reusable agent skills for delivering changes across projects and technology stacks. Install `ship-change` for the complete workflow, or select a focused skill for a single part of the work.
 
 | Skill | Use it to |
 | --- | --- |
+| `ship-change` | Implement, independently review, and verify a change through the project's delivery process |
 | `orchestrate` | Coordinate isolated workers, review results, and integrate authorized changes |
 | `development-testing` | Choose meaningful checks based on the change's risks |
 | `release-gate` | Run the project's required checks before handing off the final result |
@@ -32,7 +33,7 @@ cd workflow-skills
 node bin/workflow-skills.mjs add --project ../my-project
 ```
 
-Select the skills and agents you want, review the destinations, then type `yes` to install. Press Enter at the selection prompts to choose all three skills and the four supported harnesses: Codex, Claude Code, ZCode, and OpenCode. Restart or refresh your agent afterward.
+Select the skills and agents you want, review the destinations, then type `yes` to install. Press Enter at the selection prompts to choose all skills and the four supported harnesses (Codex, Claude Code, ZCode, and OpenCode). Restart or refresh your agent afterward.
 
 Confirm installation:
 
@@ -43,10 +44,10 @@ node bin/workflow-skills.mjs list --project ../my-project
 Then ask your agent to use a skill, for example:
 
 ```text
-Use development-testing to verify this change against its acceptance criteria.
+Use ship-change to implement this fix and prepare a verified pull request.
 ```
 
-For updates, removal, user-wide installation, and troubleshooting, read the [full usage guide](docs/guide.md).
+For updates, removal, user-wide installation, and troubleshooting, read the [full usage guide](docs/guide.md). To use `ship-change` across BB projects, follow the [BB installation instructions](docs/guide.md#other-installation-options).
 
 Choose one installer for each installation. The [full guide](docs/guide.md#alternative-skills-cli) explains how the two managers differ.
 
