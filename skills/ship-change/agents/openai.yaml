@@ -1,6 +1,6 @@
 interface:
   display_name: 'Ship a Change'
-  short_description: 'Implement, review, and deliver with project-specific checks'
-  default_prompt: 'Use $ship-change to implement this request and verify it through the authorized delivery stage.'
+  short_description: 'One workflow for repository changes'
+  default_prompt: 'Use $ship-change for this repository change. Give me the result and evidence for the requested delivery step.'
 policy:
   allow_implicit_invocation: true

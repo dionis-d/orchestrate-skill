@@ -1,25 +1,45 @@
 ---
 name: release-gate
-description: Discover, run, and report required checks for a specific delivery phase and revision. Use to verify readiness or as the verification phase of an active delivery workflow.
+description: Use for checks on a candidate before a delivery step.
 ---
 
-# Release gate
+# Do the delivery checks
 
-Verify the candidate for the requested phase. Accept the phase, candidate, and receipts from the active delivery coordinator. When invoked alone, derive them from the request and project. Return evidence to the caller and leave delivery transitions with their owner.
+If a delivery coordinator is active, use its candidate and delivery step. For standalone use, find them in the request and project rules. Give the results to the coordinator or user.
 
-## Discover requirements
+## 1. Find the checks
 
-Read the applicable project instructions, optional project preferences, manifests, hooks, and CI or release workflows. Trace wrappers and triggers. Identify the baseline and exact candidate revision or working-tree snapshot, including relevant untracked inputs. Account for configuration, dependencies, generated output, and build or publication effects as well as executable changes.
+1. Read the repository instructions, test configuration, hooks, and CI workflows.
+2. If `.workflow-skills.json` is available, read the project preferences.
+3. Use preferences that agree with the repository instructions.
+4. Find the candidate, necessary checks, environments, and inputs for the step.
+5. If you cannot identify all necessary checks, record the missing information.
 
-List the required checks for this phase from project policy. Commit, push, draft creation, readiness, merge, and release may require different suites, hosts, receipts, or candidate revisions. For a final gate, use the defined project suite or derive the local scope from required CI and affected boundaries. Record missing requirements and where remote or platform-specific verification belongs. If no required set can be established, run meaningful available checks and report readiness as unconfirmed.
+If the rules specify a clean commit, do these steps before the tests.
 
-## Reuse or run checks
+1. Record the `HEAD` revision and checkout status.
+2. Examine staged and tracked changes.
+3. Record the applicable untracked, ignored, or generated inputs.
+4. Make sure that the checkout and inputs agree with the clean checkout rules.
+5. If they do not agree, wait until you can do the tests in a checkout that meets the rules.
 
-For clean committed verification, establish and record the exact HEAD and clean checkout before running checks. Inspect staged and tracked state and identify any relevant untracked, ignored, or generated inputs. Resolve disallowed inputs within scope or report the requirement incomplete. Record allowed inputs that affect results so the delivery owner can verify that the checkout and PR source still match the evidence before creating either kind of PR.
+## 2. Use or get evidence
 
-- Accept a receipt only when policy permits reuse and it identifies the exact required revision or an explicitly accepted equivalent artifact, command or job, working directory, environment and dependencies, scope, and result. Use the required remote head or merge candidate when specified. For a clean committed check, the receipt must also establish cleanliness and relevant input state at test start. An approximate diff, stale result, skipped or uncollected suite, or missing receipt leaves a gap.
-- Run unsatisfied required checks from the documented environment. Run the full integrated gate once when earlier checks did not satisfy it. After changes, rerun invalidated checks and any aggregate gate policy requires. Honor phase-specific fresh runs.
-- Use the project's accepted check-only route when a wrapper would also push, publish, deploy, or mutate shared state outside authorization. If no accepted route exists, mark that check incomplete. Use disposable fixtures and run concurrently only with independent resources.
-- Confirm collection, execution, and any skips. Diagnose failures, repair in-scope issues if assigned, and rerun affected checks. Preserve unrelated failures and protections. Record diagnostic retries and distinguish static evidence from runtime coverage.
+1. If the project accepts previous evidence for this step, use it.
+2. Make sure that the candidate, check, scope, inputs, dependencies, environment, and result agree with the requirement.
+3. Before a check, examine the command and the programs it starts for effects outside the approved scope.
+4. If a command has such effects, use a check-only command that the project accepts.
+5. If no such command is available, record the check as incomplete.
+6. Use disposable test resources and the minimum necessary access.
+7. Do the remaining applicable checks in the specified environment.
+8. Do checks in parallel only if they have isolated writable resources.
+9. Make sure that each necessary test ran.
+10. If the candidate or its test inputs change, do the applicable checks again.
 
-Report `pass`, `fail`, `incomplete`, or `not applicable` for the phase. A pass requires evidence for every required check. Include the candidate, the checks run or reused, where they ran, results, and material gaps. For unintegrated work, state what still needs verification after integration.
+## 3. Give the result
+
+For each check, give the candidate, command or CI job, location, environment, applicable inputs, and result. For a clean commit, include the checkout status before the tests. Give a list of optional skips.
+
+If the evidence shows that all necessary checks passed, use `pass`. If a necessary check failed, use `fail`. If evidence is missing, use `incomplete`. If the step has no necessary checks, use `not applicable`.
+
+For new or changed English technical text, use [ASD-STE100 Issue 9](https://www.asd-ste100.org/assets/files/ASD-STE100_ISSUE9.pdf) if the output rules let you.

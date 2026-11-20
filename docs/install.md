@@ -1,21 +1,21 @@
 # Install the skills in a project
 
-This guide installs workflow skills for Codex, Claude Code, ZCode, or OpenCode. Choose `ship-change` for the complete workflow. No project configuration is required.
+This guide installs `ship-change` for Codex, Claude Code, ZCode, or OpenCode. The focused skills are optional. No project configuration is required.
 
 ## Fastest option: one command
 
 For Codex, Claude Code, or OpenCode, open a terminal **in your target project's root** and run:
 
 ```sh
-npx skills@latest add dionis-d/orchestrate-skill
+npx skills@latest add dionis-d/orchestrate-skill --skill ship-change
 ```
 
-Choose your skills and agent at the prompts, then restart or refresh the agent. This command downloads the skills directly; you can skip the cloning steps below.
+Choose your agent at the prompts, then restart or refresh the agent. This command downloads the skills directly; you can skip the cloning steps below.
 
-To install all skills for Codex without prompts:
+To install `ship-change` for Codex without prompts:
 
 ```sh
-npx --yes skills@latest add dionis-d/orchestrate-skill --skill '*' --agent codex --yes
+npx --yes skills@latest add dionis-d/orchestrate-skill --skill ship-change --agent codex --yes
 ```
 
 Replace `codex` with `claude-code` or `opencode` to choose one of those agents. Manage these installations from the target project with `npx skills@latest list`, `npx skills@latest update`, and `npx skills@latest remove`. See the [skills CLI documentation](https://github.com/vercel-labs/skills) for all supported agents and options.
@@ -57,16 +57,15 @@ workspace/
 Run this command **from `workflow-skills`**:
 
 ```sh
-node bin/workflow-skills.mjs add --project "../my-project"
+node bin/workflow-skills.mjs add --project "../my-project" --skill ship-change
 ```
 
 Replace `../my-project` with your project's actual relative or absolute path. Keep quotes around paths containing spaces. Verify that this path points to the intended project root before confirming installation.
 
 ## 4. Answer the installer prompts
 
-1. **Skills** — press Enter to install all skills, or type a selection such as `ship-change`.
-2. **Agents:** type the agent you use from the table below. For several agents, separate their names with commas. Press Enter to select all four.
-3. **Confirmation:** check that the displayed paths belong to the intended project, then type `yes`.
+1. **Agents:** type the agent you use from the table below. For several agents, separate their names with commas. Press Enter to select all four.
+2. **Confirmation:** check that the displayed paths belong to the intended project, then type `yes`.
 
 | Agent | Name to enter | Installed project directory |
 | --- | --- | --- |
@@ -92,13 +91,13 @@ Use the same target path as before. The selected skills should appear with statu
 
 Restart or refresh the agent and open the target project. In ZCode, use **Settings → Skills → Refresh** and enable the installed skills.
 
-Select `development-testing` from the agent's skills menu, or ask:
+If the client allows automatic skill activation, it may choose `ship-change` for a matching request. To invoke it explicitly, select it from the agent's skills menu or ask:
 
 ```text
-Use development-testing to plan verification for my next code change.
+Use ship-change to implement this fix and prepare a verified pull request.
 ```
 
-Codex and ZCode support `$development-testing`; Claude Code uses `/development-testing`. In OpenCode, ask the agent to load the skill through its skill tool.
+Codex and ZCode support `$ship-change`; Claude Code uses `/ship-change`. In OpenCode, ask the agent to load the skill through its skill tool.
 
 Installation is complete when the agent can load the selected skill.
 

@@ -1,23 +1,18 @@
 # Worker brief
 
-Fill the applicable fields with values from the target project's working context.
+Give each worker this information.
 
-```text
-Task and acceptance criteria: <one bounded implementation task>
-Project instructions: <relevant instructions and compatible phase skills>
-Assigned workspace, branch, and baseline: <verified workspace and revision>
-Writable scope and dependencies: <files, behavior, dependencies>
-Resources: <isolated fixtures, namespaces, and reserved shared resources>
-Verification: <focused checks and applicable requirements for local handoff>
-Authorized actions: <explicit worker transitions and side effects>
+| Field | Information |
+| --- | --- |
+| Task | One task and its acceptance criteria |
+| Workspace | Path, branch, and exact base revision |
+| Scope | Files the worker can change |
+| Project rules | Instructions and required checks for this task |
+| Test resources | Isolated test data and any shared resource |
+| Approval | Actions the worker can do |
 
-Verify the workspace and branch before writing or running checks. Work within
-the assigned scope. Report cross-worker dependencies before touching shared
-resources. Use documented disposable fixtures and authorized access.
+Tell the worker to make sure that the workspace agrees with the assignment before a change. Tell the worker to give you the details before use of a shared writable resource.
 
-Return the candidate revision, behavior changed, checks and results, where
-they ran, relevant environment and fixture details, and remaining evidence
-or scope gaps. Identify dirty or ignored artifacts relevant to handoff.
-```
+Give each worker the rules for commands with effects outside the approved scope. If there is no approved check-only command, tell the worker to record the missing check.
 
-The coordinator handles integration, independent review, the final integrated gate, and external delivery. Assign an exception only for a specific phase or check the worker is authorized to perform.
+Get the changed revision, check results, test environment, and missing evidence. Get the status of applicable files outside the commit. If a change is unnecessary, get evidence that the work meets its acceptance criteria.

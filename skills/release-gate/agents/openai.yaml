@@ -1,6 +1,6 @@
 interface:
   display_name: 'Release Gate'
-  short_description: 'Verify the final artifact against project quality gates'
-  default_prompt: 'Use $release-gate to discover and run the required checks for this final change.'
+  short_description: 'Checks for the next delivery step'
+  default_prompt: 'Use $release-gate for this candidate. Give me the check results for the next step.'
 policy:
   allow_implicit_invocation: true

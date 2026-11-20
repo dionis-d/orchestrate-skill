@@ -2,7 +2,7 @@
 
 For a first installation, follow the shorter [installation walkthrough](install.md). This page covers additional options and ongoing management.
 
-Start with the bundled installer if you want one workflow for Codex, Claude Code, ZCode, and OpenCode. Each skill can also be installed separately.
+Install `ship-change` for the complete workflow. Install a focused skill separately if you want to use it for a particular phase.
 
 ## 1. Prepare the two folders
 
@@ -35,14 +35,13 @@ Use the actual target path instead of `../my-project`. Relative paths are resolv
 From the skills clone, run:
 
 ```sh
-node bin/workflow-skills.mjs add --project ../my-project
+node bin/workflow-skills.mjs add --project ../my-project --skill ship-change
 ```
 
 The installer asks for:
 
-1. Accept all skills or enter a comma-separated subset.
-2. Agents: accept all four or enter a comma-separated subset.
-3. Confirmation: inspect the displayed destinations, then type `yes` to apply.
+1. Agents: accept all four or enter a comma-separated subset.
+2. Confirmation: inspect the displayed destinations, then type `yes` to apply.
 
 It copies the skill instructions, references, metadata, and license. It records ownership in the target project's `.workflow-skills-lock.json`. Existing unmanaged or edited copies are preserved: a collision stops installation.
 
@@ -55,8 +54,8 @@ node bin/workflow-skills.mjs add --project ../my-project --agent codex --skill d
 For automation, inspect a plan first, then apply it without prompting:
 
 ```sh
-node bin/workflow-skills.mjs add --project ../my-project --agent codex --dry-run
-node bin/workflow-skills.mjs add --project ../my-project --agent codex --yes
+node bin/workflow-skills.mjs add --project ../my-project --skill ship-change --agent codex --dry-run
+node bin/workflow-skills.mjs add --project ../my-project --skill ship-change --agent codex --yes
 ```
 
 Project installation is a good starting point when the skills should belong to one repository. To share them with teammates, review and commit the installed skill directories and this installer's lockfile. A user-wide installation is available under [other installation options](#other-installation-options).
@@ -74,16 +73,16 @@ Restart or refresh the agent, open the target project, and look for the installe
 
 | Agent | Project directory | Invocation |
 | --- | --- | --- |
-| Codex | `.agents/skills` | `$development-testing` |
-| Claude Code | `.claude/skills` | `/development-testing` |
-| ZCode | `.zcode/skills` | `$development-testing` |
-| OpenCode | `.agents/skills` | Ask the agent to load `development-testing` through its skill tool |
+| Codex | `.agents/skills` | `$ship-change` |
+| Claude Code | `.claude/skills` | `/ship-change` |
+| ZCode | `.zcode/skills` | `$ship-change` |
+| OpenCode | `.agents/skills` | Ask the agent to load `ship-change` through its skill tool |
 
 Codex and OpenCode share a single copy. OpenCode also reads Claude-compatible directories, so selecting both Codex and Claude can expose the same skill name through multiple sources. Select only OpenCode when installing for OpenCode alone.
 
 ## 4. Use the skills
 
-Choose the skill that matches the task. `ship-change` contains the complete workflow in a single install.
+Clients that allow automatic skill activation may choose `ship-change` for matching delivery requests. Use an explicit invocation to select it yourself. The examples below include optional focused skills for individual phases.
 
 | Task | Example request |
 | --- | --- |
@@ -94,13 +93,15 @@ Choose the skill that matches the task. `ship-change` contains the complete work
 
 ### How the skills work together
 
-Use one delivery coordinator per change. In BB, keep coordination in the active parent thread and use native worker and review capabilities when available and authorized. If an installed project workflow already owns delivery, give it focused help from these skills. Use the project's applicable diagnosis, TDD, changed-code, review, and PR skills for individual phases. Every entrypoint also provides a direct approach when companion skills or native tools are unavailable.
+Use one delivery coordinator per change. In BB, keep coordination in the parent thread. If an active project workflow owns delivery, use the skills for the assigned work. `ship-change` uses the repository's procedure first and can select a compatible specialist for an unassigned phase.
 
-Give each worker one task, an assigned workspace and baseline, acceptance criteria, and focused checks. Separate writable workspaces and test resources. Serialize work that shares writable fixtures or other resources that cannot be isolated. Workers return their revisions, check results, and gaps. The coordinator integrates the work, arranges fresh independent review, and owns the full integrated gate. When independent review is unavailable, report it as pending and hold any transition that requires it.
+Give each worker one task, an isolated writable workspace, a base revision, and focused checks. Do work that shares writable resources in sequence. The coordinator integrates the work and gets independent review when rules or risk make it necessary. If you cannot get that review, record the gap and wait before a step that requires it.
 
-The project determines what must pass before each commit, push, draft, readiness update, merge, or release. Earlier required checks still run at the prescribed phase. Reuse a qualifying receipt directly from the owner of the check phase when it meets project requirements for the exact candidate, check scope, and environment. Where policy requires clean committed verification, record HEAD and checkout cleanliness at test start, including relevant untracked or generated inputs, and confirm both before creating a draft or regular PR. An authorized draft can enable CI or native review after its creation prerequisites pass. Confirm the required review and checks on the current candidate before advancing it.
+The project specifies when checks must pass. Reuse evidence only when the project accepts it for the candidate and environment. The [candidate checks](../skills/ship-change/references/verification.md) describe what to do if a project requires a test on a clean commit before opening a PR.
 
-Use disposable test resources and inspect scripts and remote triggers before actions with side effects. Publishing, PR operations, merges, deployment, and changes to shared services need authorization for their effects. If a required check cannot run safely within scope, report the missing evidence.
+Use disposable test resources. Examine scripts and remote triggers before actions that can affect other systems. Get approval for merge and deployment.
+
+Use [ASD-STE100 Issue 9](../skills/ship-change/references/technical-english.md) for new or changed English technical text when the repository and user permit it. Keep required templates, commands, names, and quotations.
 
 ## 5. Update or remove copies
 
@@ -129,7 +130,7 @@ Omit `--skill` to remove every copy managed by this installer in the chosen scop
 
 ```sh
 npm install --global .
-workflow-skills add --project ../my-project
+workflow-skills add --project ../my-project --skill ship-change
 ```
 
 This installs the CLI from source, not the skills themselves. It does not require an npm registry release. If the global prefix is not writable, use the direct `node` commands above or configure a writable npm prefix. After updating the clone, reinstall the CLI if your npm installation uses a separate copy.
@@ -137,7 +138,7 @@ This installs the CLI from source, not the skills themselves. It does not requir
 **User-wide skills.** To make skills available to your local projects:
 
 ```sh
-node bin/workflow-skills.mjs add --global
+node bin/workflow-skills.mjs add --global --skill ship-change
 node bin/workflow-skills.mjs list --global
 ```
 
@@ -154,7 +155,7 @@ Start a new BB thread in any project and select `/ship-change`. If your BB data 
 **Another harness.** Choose its documented discovery directory:
 
 ```sh
-node bin/workflow-skills.mjs add --project ../my-project --skills-dir .other-agent/skills
+node bin/workflow-skills.mjs add --project ../my-project --skills-dir .other-agent/skills --skill ship-change
 ```
 
 Use either `--agent` or `--skills-dir`. The destination must be inside the target project and must not overlap the source skills. Other harnesses must support standard skill folders or explicitly read the entrypoint; copying files alone cannot add a missing capability.
@@ -184,10 +185,10 @@ Replace these examples with actual project choices. Omit `baseBranch` for discov
 The [skills CLI](https://github.com/vercel-labs/skills) provides interactive installation from GitHub and local sources. From the target project:
 
 ```sh
-npx skills@latest add dionis-d/orchestrate-skill
+npx skills@latest add dionis-d/orchestrate-skill --skill ship-change
 ```
 
-Choose skills, agents, and the offered installation method. For a local sibling clone, use `npx skills@latest add ../workflow-skills`. For explicit ZCode support, use the bundled installer or ZCode's skill import feature; consult the CLI's current supported-agent list before selecting a harness.
+Choose agents and the offered installation method. For a local sibling clone, use `npx skills@latest add ../workflow-skills --skill ship-change`. For explicit ZCode support, use the bundled installer or ZCode's skill import feature; consult the CLI's current supported-agent list before selecting a harness.
 
 Manage this installation with the same CLI:
 
