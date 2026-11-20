@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, readFile, rm, access, symlink } from 'node:fs/promises';
+import fs, { mkdtemp, mkdir, writeFile, readFile, rm, access, symlink, utimes, stat } from 'node:fs/promises';
+import { syncBuiltinESMExports } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { promisify } from 'node:util';
@@ -198,4 +199,93 @@ test('CLI supports unattended project setup and refuses conflicting destinations
   assert.equal(config.endgame, 'local-branches');
   assert.deepEqual(config.gateCommands, []);
   await assert.rejects(exec(process.execPath, [cli, 'add', '--project', f.root, '--agent', 'codex', '--skills-dir', '.custom/skills', '--yes']), error => error.code === 1);
+});
+
+test('custom destinations cannot overlap managed skills in either direction', async t => {
+  const f = await fixture(t);
+  await manage({ ...f, command: 'add', skillsDir: 'outer/demo/inner' });
+  for (const skillsDir of ['outer/demo/inner/demo', 'outer']) {
+    for (const dryRun of [true, false]) {
+      await assert.rejects(manage({ ...f, command: 'add', skillsDir, dryRun }), /overlap.*managed/i);
+    }
+  }
+  assert.deepEqual((await inspect(f.root, f.source)).map(row => row.status), ['current']);
+  await assert.rejects(access(join(f.root, 'outer/demo/inner/demo/demo')));
+});
+
+test('custom destinations cannot turn the installation manifest into a directory', async t => {
+  const f = await fixture(t);
+  const skillsDir = '.workflow-skills-lock.json/nested';
+  await assert.rejects(manage({ ...f, command: 'add', skillsDir }), /overlap.*manifest/i);
+  await assert.rejects(access(join(f.root, '.workflow-skills-lock.json')));
+});
+
+test('equivalent custom paths preserve the manifest spelling and skip identical writes', async t => {
+  const f = await fixture(t);
+  const skillsDir = 'Custom/skills';
+  await manage({ ...f, command: 'add', skillsDir });
+  const paths = [join(f.root, skillsDir, 'demo/SKILL.md'), join(f.root, '.workflow-skills-lock.json')];
+  for (const path of paths) await utimes(path, 1234567890, 1234567890);
+  const timestamps = await Promise.all(paths.map(async path => (await stat(path)).mtimeMs));
+  const alias = process.platform === 'win32' ? 'custom/./SKILLS' : 'Custom/./skills';
+  await manage({ ...f, command: 'add', skillsDir: alias });
+  await manage({ ...f, command: 'update' });
+  assert.deepEqual(await Promise.all(paths.map(async path => (await stat(path)).mtimeMs)), timestamps);
+  assert.equal((await readLock(f.root)).entries[0].directory, 'Custom/skills/demo');
+
+  await writeFile(join(f.source, 'demo/SKILL.md'), 'Version two');
+  await manage({ ...f, command: 'add', skillsDir: alias });
+  assert.equal(await readFile(paths[0], 'utf8'), 'Version two');
+  assert.equal((await readLock(f.root)).entries[0].directory, 'Custom/skills/demo');
+});
+
+test('manifest rejects duplicate path aliases even when the directory is missing', async t => {
+  const f = await fixture(t);
+  const hash = 'a'.repeat(64);
+  const first = { name: 'demo', directory: 'Custom/skills/demo', hash };
+  const alias = process.platform === 'win32' ? 'custom/./SKILLS/demo' : 'Custom/./skills/demo';
+  await writeFile(join(f.root, '.workflow-skills-lock.json'), JSON.stringify({
+    version: 1, entries: [first, { ...first, directory: alias }],
+  }));
+  await assert.rejects(readLock(f.root), /duplicate installation path/);
+});
+
+test('a locally added __proto__ file blocks removal', async t => {
+  const f = await fixture(t);
+  await manage({ ...f, command: 'add', skillsDir: 'custom' });
+  const path = join(f.root, 'custom/demo/__proto__');
+  await writeFile(path, 'Local file');
+  await assert.rejects(manage({ ...f, command: 'remove' }), /Locally modified/);
+  assert.equal(await readFile(path, 'utf8'), 'Local file');
+});
+
+test('manifest rename failure restores the skill for add, update, and remove', async t => {
+  const f = await fixture(t);
+  const manifest = join(f.root, '.workflow-skills-lock.json');
+  const path = join(f.root, 'custom/demo/SKILL.md');
+  const rename = fs.rename;
+  let fail = true;
+  const mocked = t.mock.method(fs, 'rename', (from, to) => {
+    if (fail && to === manifest) throw new Error('Injected manifest rename failure');
+    return rename(from, to);
+  });
+  syncBuiltinESMExports();
+  t.after(() => { mocked.mock.restore(); syncBuiltinESMExports(); });
+
+  const options = { ...f, skillsDir: 'custom' };
+  await assert.rejects(manage({ ...options, command: 'add' }), /Injected manifest rename failure/);
+  await assert.rejects(access(path));
+  await assert.rejects(access(manifest));
+
+  fail = false;
+  await manage({ ...options, command: 'add' });
+  const original = await readFile(path, 'utf8');
+  const lock = await readFile(manifest, 'utf8');
+  await writeFile(join(f.source, 'demo/SKILL.md'), 'Version two');
+  fail = true;
+  for (const command of ['update', 'remove']) {
+    await assert.rejects(manage({ ...options, command }), /Injected manifest rename failure/);
+    assert.equal(await readFile(path, 'utf8'), original);
+    assert.equal(await readFile(manifest, 'utf8'), lock);
+  }
 });
