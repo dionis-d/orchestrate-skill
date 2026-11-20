@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs, { mkdtemp, mkdir, writeFile, readFile, rm, access, symlink, utimes, stat } from 'node:fs/promises';
+import fs, { mkdtemp, mkdir, writeFile, readFile, rm, access, symlink, utimes, stat, realpath } from 'node:fs/promises';
 import { syncBuiltinESMExports } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -10,7 +10,7 @@ import { manage, inspect, readLock, configure, sourceRoot } from '../lib/manager
 
 const exec = promisify(execFile);
 async function fixture(t) {
-  const temp = await mkdtemp(join(tmpdir(), 'workflow-skills-test-'));
+  const temp = await mkdtemp(join(await realpath(tmpdir()), 'workflow-skills-test-'));
   t.after(() => rm(temp, { recursive: true, force: true }));
   const root = join(temp, 'project with spaces');
   const source = join(temp, 'source');
@@ -288,4 +288,60 @@ test('manifest rename failure restores the skill for add, update, and remove', a
     assert.equal(await readFile(path, 'utf8'), original);
     assert.equal(await readFile(manifest, 'utf8'), lock);
   }
+});
+
+test('case aliases cannot nest inside a managed skill on a case-insensitive filesystem', async t => {
+  const f = await fixture(t);
+  await manage({ ...f, command: 'add', skillsDir: 'Custom/skills' });
+  const alias = join(f.root, 'custom/SKILLS/demo');
+  if (!await stat(alias).catch(error => { if (error.code !== 'ENOENT') throw error; })) {
+    return t.skip('Requires a case-insensitive fixture filesystem');
+  }
+
+  const skillsDir = 'custom/SKILLS/demo/new/child';
+  await assert.rejects(manage({ ...f, command: 'add', skillsDir }), /overlap.*managed/i);
+  assert.deepEqual((await inspect(f.root, f.source)).map(row => row.status), ['current']);
+  await assert.rejects(access(join(alias, 'new')));
+});
+
+test('case-distinct managed paths work on a case-sensitive POSIX filesystem', async t => {
+  if (process.platform === 'win32') return t.skip('Requires POSIX path handling');
+  const f = await fixture(t);
+  await manage({ ...f, command: 'add', skillsDir: 'Custom/skills' });
+  if (await stat(join(f.root, 'custom')).catch(error => { if (error.code !== 'ENOENT') throw error; })) {
+    return t.skip('Requires a case-sensitive fixture filesystem');
+  }
+
+  await manage({ ...f, command: 'add', skillsDir: 'custom/skills/demo/new/child' });
+  assert.deepEqual((await inspect(f.root, f.source)).map(row => row.status), ['current', 'current']);
+});
+
+test('backup cleanup failure warns and preserves committed add, update, and remove', async t => {
+  const f = await fixture(t);
+  const options = { ...f, skillsDir: 'custom' };
+  await manage({ ...options, command: 'add' });
+  const pendingBackups = [];
+  const remove = fs.rm;
+  const mocked = t.mock.method(fs, 'rm', (path, options) => {
+    if (path.endsWith('.backup')) {
+      pendingBackups.push(path);
+      throw new Error('Injected backup cleanup failure');
+    }
+    return remove(path, options);
+  });
+  syncBuiltinESMExports();
+  t.after(() => { mocked.mock.restore(); syncBuiltinESMExports(); });
+  const warn = t.mock.method(process, 'emitWarning', () => {});
+
+  for (const command of ['add', 'update', 'remove']) {
+    await writeFile(join(f.source, 'demo/SKILL.md'), command);
+    assert.equal((await manage({ ...options, command })).length, 1);
+    assert.deepEqual((await inspect(f.root, f.source)).map(row => row.status), command === 'remove' ? [] : ['current']);
+    const backup = pendingBackups.at(-1);
+    await access(join(backup, 'SKILL.md'));
+    const [message] = warn.mock.calls.at(-1).arguments;
+    assert.ok(message.includes(backup));
+    assert.match(message, /Injected backup cleanup failure/);
+  }
+  assert.equal(warn.mock.callCount(), 3);
 });
