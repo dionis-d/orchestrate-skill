@@ -5,7 +5,7 @@ description: Plan and run risk-based verification before changing executable beh
 
 # Development testing
 
-Choose evidence that would detect the change's likely failures. Use the cheapest test boundary that exercises the real behavior, then add checks for risks it cannot observe. Existing sufficient coverage is a reason to reuse tests, not duplicate them.
+Use this skill on its own or for the verification work assigned by the active delivery coordinator. Choose evidence that would detect the change's likely failures. Use the cheapest test boundary that exercises the real behavior, then add checks for risks it cannot observe. Existing sufficient coverage is a reason to reuse tests, not duplicate them.
 
 ## 1. Establish the verification target
 
@@ -30,7 +30,7 @@ For substantive changes, briefly state **behavior → failure risk → test boun
 - **Refactor:** establish passing behavioral coverage before risky restructuring. Preserve the contract; characterize undocumented behavior when needed without treating a known defect as the desired specification.
 - **Late invocation:** audit the changed behavior and tests, repair in-scope gaps, and use an isolated pre-fix version or targeted mutation if needed. Preserve existing work. Report which evidence was actually observed; late loading alone does not establish thinner coverage.
 
-When diagnosis or explicit TDD is already in use, keep one implementation loop and use this skill for risk selection and complementary evidence. This skill adds no separate approval checkpoint. Follow applicable repository instructions and existing user authorization.
+Use compatible installed diagnosis and TDD skills for their applicable phases. When either already owns the implementation loop, contribute risk selection and complementary evidence to that loop. Use applicable changed-code tools for evidence their analysis can establish. Without those skills, use the practices above and inspect the changed code and affected consumers directly.
 
 ## 3. Check that tests discriminate
 
@@ -38,13 +38,13 @@ For each added or changed test, name a plausible incorrect behavior its assertio
 
 Read [assertion quality](references/assertion-quality.md) when auditing weak tests, using mocks or shared expected values, designing property/snapshot checks, or applying a deletion/mutation check. Deletion is one diagnostic: surviving it is not automatically tautology, and failing to compile proves nothing about an assertion. Demonstrate sensitivity with the observed regression or a valid targeted mutation when risk or uncertainty warrants it; mechanical mutation of every test is unnecessary.
 
-Keep fixtures isolated and reproducible. Control clocks, randomness, identities, and relevant locale/time-zone settings. Await asynchronous work; use bounded condition waits and framework retrying assertions for rendering or eventual results. Diagnose whole-test retries separately from these waits.
+Keep fixtures isolated and reproducible. Use disposable state, isolate writable namespaces, and serialize checks that must share mutable resources. Control clocks, randomness, identities, and relevant locale/time-zone settings. Await asynchronous work; use bounded condition waits and framework retrying assertions for rendering or eventual results. Diagnose whole-test retries separately from these waits.
 
 ## 4. Validate and close
 
 Run focused checks first, then affected integration/consumer checks and applicable static/build checks. Confirm the intended tests were collected and executed; a zero-test run or skipped database suite is not a pass. Parallelize only checks with independent resources.
 
-Apply the project's completion gate after the final relevant edit. Use the installed `release-gate` skill if available; otherwise discover and run equivalent checks directly. Select additional integration/browser checks from the changed boundary. Read [verification discovery](references/verification-discovery.md) when resolving commands, environments, or gate coverage. This skill works independently of the other skills in this collection. Optional root `.workflow-skills.json` supplies project guidance; repository instructions and actual CI remain authoritative.
+Workers run focused acceptance checks and checks required for their own authorized transitions, then return the candidate revision, commands, environment, results, and gaps to the coordinator. The coordinator owns the full gate on the integrated result. For standalone implementation without a coordinator, meet the requirements for the requested handoff with the installed `release-gate` skill or equivalent project checks. For a test audit, run the checks relevant to the audit scope. Read [verification discovery](references/verification-discovery.md) when resolving commands, environments, or gate coverage.
 
 Investigate failures, fix those introduced by this work, and preserve evidence for unrelated or unresolved failures. For coverage, mutation, flaky-test, or performance claims, read [quality measurement](references/quality-measurement.md). Once selected checks pass, stop expanding or repeating them unless a new change, failure, or uncovered risk justifies it.
 

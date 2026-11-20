@@ -4,7 +4,7 @@ import { available, sourceRoot, tree } from '../lib/manager.mjs';
 
 const problems = [];
 const names = await available();
-for (const expected of ['orchestrate', 'development-testing', 'release-gate']) {
+for (const expected of ['orchestrate', 'development-testing', 'release-gate', 'ship-change']) {
   if (!names.includes(expected)) problems.push(`Missing required skill: ${expected}`);
 }
 for (const name of names) {

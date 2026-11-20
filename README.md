@@ -1,12 +1,13 @@
 # Workflow skills
 
-Reusable agent skills for planning implementation, testing behavior, and checking delivery readiness. They work independently across projects and technology stacks.
+Reusable agent skills for delivering changes across projects and technology stacks. Use `ship-change` to coordinate delivery, or install any focused skill on its own. In BB or a project with an active delivery workflow, give the existing coordinator the focused phase and keep one delivery workflow per change.
 
 | Skill | Use it to |
 | --- | --- |
+| `ship-change` | Implement, independently review, and verify a change through the project's delivery process |
 | `orchestrate` | Coordinate isolated workers, review results, and integrate authorized changes |
 | `development-testing` | Choose meaningful checks based on the change's risks |
-| `release-gate` | Run the project's required checks before handing off the final result |
+| `release-gate` | Verify a specific candidate against the checks required for its delivery phase |
 
 ## One-line installation
 
@@ -32,7 +33,7 @@ cd workflow-skills
 node bin/workflow-skills.mjs add --project ../my-project
 ```
 
-Select the skills and agents you want, review the destinations, then type `yes` to install. Press Enter at the selection prompts to choose all three skills and the four supported harnesses: Codex, Claude Code, ZCode, and OpenCode. Restart or refresh your agent afterward.
+Select the skills and agents you want, review the destinations, then type `yes` to install. Press Enter at the selection prompts to choose all skills and the four supported harnesses (Codex, Claude Code, ZCode, and OpenCode). Restart or refresh your agent afterward.
 
 Confirm installation:
 
@@ -43,10 +44,10 @@ node bin/workflow-skills.mjs list --project ../my-project
 Then ask your agent to use a skill, for example:
 
 ```text
-Use development-testing to verify this change against its acceptance criteria.
+Use ship-change to implement this fix and prepare a verified pull request.
 ```
 
-For updates, removal, user-wide installation, and troubleshooting, read the [full usage guide](docs/guide.md).
+For updates, removal, user-wide installation, and troubleshooting, read the [full usage guide](docs/guide.md). To use `ship-change` across BB projects, follow the [BB installation instructions](docs/guide.md#other-installation-options).
 
 Choose one installer for each installation. The [full guide](docs/guide.md#alternative-skills-cli) explains how the two managers differ.
 
@@ -58,7 +59,7 @@ No configuration is required. Skills discover repository instructions, commands,
 node bin/workflow-skills.mjs init --project ../my-project
 ```
 
-Parallel orchestration requires a harness that can isolate worker directories; otherwise tasks run sequentially. Installing a skill does not enable unavailable agent tools or authorize publishing and deployment.
+Workers run focused checks in isolated workspaces. The coordinator owns independent review and the full integrated gate. See [how the skills work together](docs/guide.md#how-the-skills-work-together) for phase-specific checks, draft PRs, and reuse of verification evidence.
 
 ## Contributing
 

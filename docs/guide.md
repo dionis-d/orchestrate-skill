@@ -40,7 +40,7 @@ node bin/workflow-skills.mjs add --project ../my-project
 
 The installer asks for:
 
-1. Skill names: accept all three or enter a comma-separated subset.
+1. Accept all skills or enter a comma-separated subset.
 2. Agents: accept all four or enter a comma-separated subset.
 3. Confirmation: inspect the displayed destinations, then type `yes` to apply.
 
@@ -83,15 +83,24 @@ Codex and OpenCode share a single copy. OpenCode also reads Claude-compatible di
 
 ## 4. Use the skills
 
-Choose the skill that matches the task. You do not have to run all three in sequence.
+Choose the skill that matches the task. `ship-change` contains the complete workflow in a single install.
 
 | Task | Example request |
 | --- | --- |
+| Deliver a change from request through verification | “Use ship-change to implement this fix and prepare a verified PR.” |
 | Implement several independent tasks | “Use orchestrate for these tickets. Keep reviewed branches local for now.” |
 | Develop or review a behavior change | “Use development-testing to verify this fix, including a regression for the reported failure.” |
 | Check the final result | “Use release-gate to run this project's required checks and report any missing evidence.” |
 
-Include acceptance criteria and relevant task paths. Skills follow project instructions and discover the project's commands. If the harness cannot run isolated workers, orchestration runs sequentially. A skill can report blocked or incomplete verification when a required service or platform is unavailable.
+### How the skills work together
+
+Use one delivery coordinator per change. In BB, keep coordination in the active parent thread and use native worker and review capabilities when available and authorized. If an installed project workflow already owns delivery, give it focused help from these skills. Use the project's applicable diagnosis, TDD, changed-code, review, and PR skills for individual phases. Every entrypoint also provides a direct approach when companion skills or native tools are unavailable.
+
+Give each worker one task, an assigned workspace and baseline, acceptance criteria, and focused checks. Separate writable workspaces and test resources. Serialize work that shares writable fixtures or other resources that cannot be isolated. Workers return their revisions, check results, and gaps. The coordinator integrates the work, arranges fresh independent review, and owns the full integrated gate. When independent review is unavailable, report it as pending and hold any transition that requires it.
+
+The project determines what must pass before each commit, push, draft, readiness update, merge, or release. Earlier required checks still run at the prescribed phase. Reuse a qualifying receipt directly from the owner of the check phase when it meets project requirements for the exact candidate, check scope, and environment. Where policy requires clean committed verification, record HEAD and checkout cleanliness at test start, including relevant untracked or generated inputs, and confirm both before creating a draft or regular PR. An authorized draft can enable CI or native review after its creation prerequisites pass. Confirm the required review and checks on the current candidate before advancing it.
+
+Use disposable test resources and inspect scripts and remote triggers before actions with side effects. Publishing, PR operations, merges, deployment, and changes to shared services need authorization for their effects. If a required check cannot run safely within scope, report the missing evidence.
 
 ## 5. Update or remove copies
 
@@ -133,6 +142,14 @@ node bin/workflow-skills.mjs list --global
 ```
 
 Use `--global` consistently for checking, updating, and removing those copies. Codex/OpenCode use `~/.agents/skills`, Claude Code uses `~/.claude/skills`, and ZCode uses `~/.zcode/skills`. Local user directories are not automatically available in remote or cloud workspaces.
+
+**BB across projects.** From the skills clone, install into BB's default user skills directory:
+
+```sh
+node bin/workflow-skills.mjs add --global --skills-dir .bb/skills --skill ship-change
+```
+
+Start a new BB thread in any project and select `/ship-change`. If your BB data directory is customized, use `--project <BB-data-directory> --skills-dir skills` in place of `--global --skills-dir .bb/skills` and use that `--project` path to manage the copy.
 
 **Another harness.** Choose its documented discovery directory:
 

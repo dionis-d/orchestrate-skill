@@ -13,9 +13,9 @@ Researched 2026-10-07. Sources below are primary project documentation, not thir
 
 ## Portability decisions
 
-Project-specific workflows were adapted into three independently installable skills: `orchestrate`, `development-testing`, and `release-gate`. Generic assertion, BDD, QA, measurement, and strategy references were retained. Repository-specific verification guidance was replaced with project-neutral command and environment discovery. All three skills include optional OpenAI display metadata alongside portable instructions.
+Four independently installable skills cover delivery coordination, worker orchestration, focused testing, and phase-specific verification. Each has portable instructions and optional OpenAI display metadata. Repository command and environment discovery lets the same skills work across projects.
 
-The orchestration entrypoint uses a short workflow plus capability guidance and a worker brief. Base branch, ticket format, concurrency, ports, and model selection come from the target project and available tools. Environment files are not copied automatically, and no external workflow skill is required. One-writer isolation, dependency waves, acceptance review, clean committed delivery, and integration ownership remain central. Unresolved material review findings block integration even after a repair budget is exhausted.
+The orchestration entrypoint uses a short workflow plus capability guidance and a worker brief. Base branch, ticket format, concurrency, ports, and model selection come from the target project and available tools. Environment files are not copied automatically, and no external workflow skill is required. One delivery coordinator owns the integrated review and gate. Workers return focused acceptance evidence. Compatible installed skills can supply individual phases, and native harness tools can supply isolation and independent review. Material review findings must be resolved before the reviewed result advances.
 
 The release gate discovers required project checks rather than assuming a package manager, language, directory layout, or fixed command. It includes build/config/dependency risks and distinguishes pass/fail/incomplete/not-applicable evidence. A local pass does not guarantee a successful production release.
 

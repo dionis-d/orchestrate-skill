@@ -4,6 +4,7 @@ Inspect current tool descriptions, permissions, and repository instructions. Des
 
 | Harness | Discovery and dispatch |
 | --- | --- |
+| BB | Use the active parent thread and native worker, environment, and review capabilities when authorized. Reuse assigned environments, pass each worker its workspace explicitly, and give independent review a fresh context. |
 | OpenAI Codex | Use the documented skill locations for the installed runtime. Project installation here uses `.agents/skills`. Use exposed worker tools/custom agents only when workers can honor assigned worktrees. Model overrides depend on runtime. |
 | Claude Code | Skills use `.claude/skills` or `~/.claude/skills`. Inspect Agent/task capabilities and isolation options. If the runtime creates worktrees, use returned paths rather than creating duplicate checkouts. |
 | ZCode | Skills use `.zcode/skills` or `~/.zcode/skills`. Refresh Settings → Skills after installation. Inspect Agent/subagent capabilities; do not assume dynamic workflows or model overrides exist. |
