@@ -153,6 +153,14 @@ test('real CLI installs ship-change by itself into a BB skill directory', async 
   assert.equal(rows.length, 1);
   assert.equal(rows[0].directory, '.bb/skills/ship-change');
   assert.equal(rows[0].status, 'current');
+  assert.deepEqual(await fs.readdir(join(f.root, '.bb/skills')), ['ship-change']);
+  const installed = join(f.root, rows[0].directory);
+  const entrypoint = await readFile(join(installed, 'SKILL.md'), 'utf8');
+  for (const filename of ['specialist-routing.md', 'technical-english.md', 'verification.md']) {
+    const reference = `references/${filename}`;
+    assert.ok(entrypoint.includes(`(${reference})`));
+    assert.deepEqual(await readFile(join(installed, reference)), await readFile(join(sourceRoot, 'ship-change', reference)));
+  }
 });
 
 test('CLI fails on missing option values, conflicting scope, and unexpected input', async () => {
