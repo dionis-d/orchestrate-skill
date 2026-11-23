@@ -101,16 +101,28 @@ Use [ASD-STE100 Issue 9](../skills/ship-change/references/technical-english.md) 
 
 ## 5. Update or remove copies
 
-The bundled installer updates from its local source; it does not download changes. From an unmodified skills clone, refresh the source with a fast-forward pull, then inspect and update the target:
+The bundled installer updates from its local source. From an unmodified skills clone, refresh the source with a fast-forward pull and list the managed copies:
 
 ```sh
 git pull --ff-only
-node bin/workflow-skills.mjs check --project ../my-project
-node bin/workflow-skills.mjs update --project ../my-project --dry-run
-node bin/workflow-skills.mjs update --project ../my-project
+node bin/workflow-skills.mjs list --project ../my-project
 ```
 
-If `check` reports an update, its nonzero exit is expected; run the following commands separately rather than chaining them with `&&`. If the clone has local edits or diverged history, resolve those before pulling. Back up custom skill edits before updating their installed copies; the installer refuses to overwrite modified files.
+If you installed an earlier version, remove the retired copies with the installer that added them. For the bundled installer, run this command with the retired names shown in `list`:
+
+```sh
+node bin/workflow-skills.mjs remove --project ../my-project --skill orchestrate,development-testing,release-gate
+```
+
+If a retired copy has local edits, the installer preserves it. You can still update `ship-change` by name with the commands below. If you used `.workflow-skills.json`, move any preferences you want to keep into the repository's existing instructions.
+
+```sh
+node bin/workflow-skills.mjs update --project ../my-project --skill ship-change --dry-run
+node bin/workflow-skills.mjs update --project ../my-project --skill ship-change
+node bin/workflow-skills.mjs check --project ../my-project
+```
+
+If the clone has local edits or diverged history, resolve those before pulling. Back up custom skill edits before updating their installed copies. If a retired copy remains in the installation, `check` reports it as modified or unavailable.
 
 Remove one skill from its recorded destinations:
 
@@ -119,8 +131,6 @@ node bin/workflow-skills.mjs remove --project ../my-project --skill ship-change
 ```
 
 Omit `--skill` to remove every copy managed by this installer in the chosen scope. Removal preserves unrelated skills and project configuration. Add `--yes` only when the intended removal is already explicit.
-
-If you installed an earlier version, use `list` to find any retired skills. Remove the listed copies of `orchestrate`, `development-testing`, and `release-gate` with the installer that added them. Then update `ship-change`. Move any project delivery preferences you want to keep into the repository's existing instructions.
 
 ## Other installation options
 

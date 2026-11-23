@@ -126,7 +126,7 @@ test('exclusive install guard refuses concurrent writes', async t => {
   assert.equal(await readFile(join(f.root, '.workflow-skills-installing'), 'utf8'), 'other process');
 });
 
-test('real CLI installs only ship-change and can remove a retired managed skill', async t => {
+test('real CLI installs only ship-change across the selected harnesses', async t => {
   const f = await fixture(t);
   const cli = resolve('bin/workflow-skills.mjs');
   await exec(process.execPath, [cli, 'add', '--project', f.root, '--agent', 'codex,zcode', '--yes']);
@@ -134,12 +134,25 @@ test('real CLI installs only ship-change and can remove a retired managed skill'
   assert.deepEqual(rows.map(row => row.name), ['ship-change', 'ship-change']);
   assert.ok(rows.every(row => row.status === 'current'));
   await exec(process.execPath, [cli, 'check', '--project', f.root]);
+});
+
+test('real CLI upgrades an older ship-change installation with a retired managed skill', async t => {
+  const f = await fixture(t);
+  const cli = resolve('bin/workflow-skills.mjs');
+  const entrypoint = 'ship-change/SKILL.md';
+  await mkdir(join(f.source, 'ship-change'));
+  await writeFile(join(f.source, entrypoint), 'Older ship-change');
   await manage({ ...f, command: 'add', agentNames: ['codex'] });
-  assert.equal((await inspect(f.root)).find(row => row.name === 'demo').status, 'source unavailable');
+  const before = await inspect(f.root);
+  assert.deepEqual(before.map(row => [row.name, row.status]), [
+    ['demo', 'source unavailable'],
+    ['ship-change', 'update available'],
+  ]);
   await exec(process.execPath, [cli, 'remove', '--project', f.root, '--skill', 'demo', '--yes']);
+  await exec(process.execPath, [cli, 'update', '--project', f.root, '--skill', 'ship-change', '--yes']);
   await assert.rejects(access(join(f.root, '.agents/skills/demo')));
+  assert.deepEqual(await readFile(join(f.root, '.agents/skills', entrypoint)), await readFile(join(sourceRoot, entrypoint)));
   await exec(process.execPath, [cli, 'check', '--project', f.root]);
-  assert.deepEqual((await inspect(f.root)).map(row => row.name), ['ship-change', 'ship-change']);
 });
 
 test('real CLI installs ship-change by itself into a BB skill directory', async t => {
