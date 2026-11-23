@@ -3,15 +3,15 @@ import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
 import { homedir } from 'node:os';
 import { resolve } from 'node:path';
-import { available, agents, manage, inspect, configure } from '../lib/manager.mjs';
+import { agents, manage, inspect } from '../lib/manager.mjs';
 
-const help = `workflow-skills [add|list|check|update|remove|init] [options]
+const help = `workflow-skills [add|list|check|update|remove] [options]
 
-With no command, opens an interactive menu. add/install selects skills and agents.
+With no command, opens an interactive menu. add/install installs ship-change.
   --project <path>     Target project (default: current directory)
-  --global             Use your home directory; init is project-only
+  --global             Use your home directory
   --agent <a,b>        codex/openai, claude-code/claude, zcode, opencode
-  --skill <a,b>        Select skill names (default: all)
+  --skill <a,b>        Select names for add, update, or remove (default: all applicable)
   --skills-dir <path>  Relative discovery directory for another harness
   --yes, -y           Non-interactive mode; accepts displayed default selections
   --dry-run           Show add/update/remove plan without writing files
@@ -19,8 +19,7 @@ With no command, opens an interactive menu. add/install selects skills and agent
 
 Uses editable copies. Refuses unmanaged files, modified skills, and symlink paths.
 Update uses this checkout/package's source; refresh the checkout before updating.
-list/check/update/remove manage this installer's manifest, not skills CLI installs.
-init writes optional .workflow-skills.json guidance; never executes its commands.`;
+list/check/update/remove manage this installer's manifest, not skills CLI installs.`;
 
 async function main() {
   const argv = process.argv.slice(2);
@@ -49,9 +48,9 @@ async function main() {
     return answer || fallback;
   };
   try {
-    command ??= options['--yes'] ? 'add' : await ask('Command: add, list, check, update, remove, init', 'add');
+    command ??= options['--yes'] ? 'add' : await ask('Command: add, list, check, update, remove', 'add');
     if (command === 'install') command = 'add';
-    if (!['add', 'list', 'check', 'update', 'remove', 'init'].includes(command)) throw new Error(`Unknown command: ${command}`);
+    if (!['add', 'list', 'check', 'update', 'remove'].includes(command)) throw new Error(`Unknown command: ${command}`);
     if (options['--agent'] && options['--skills-dir']) throw new Error('Choose --agent or --skills-dir, not both');
     if (command !== 'add' && (options['--agent'] || options['--skills-dir'])) throw new Error('--agent and --skills-dir apply only to add; use --skill to select managed entries');
     let global = Boolean(options['--global']);
@@ -67,26 +66,11 @@ async function main() {
       if (command === 'check' && rows.some(row => row.status !== 'current')) process.exitCode = 1;
       return;
     }
-    if (command === 'init') {
-      if (global || options['--dry-run']) throw new Error('init requires a project and does not support --dry-run');
-      const config = {
-        baseBranch: await ask('Base branch (auto discovers the repository default)', 'auto'),
-        taskSource: await ask('Ticket source or directory', 'project instructions'),
-        gateCommands: (await ask('Local gate command (none discovers from CI)', 'none')),
-        endgame: 'local-branches',
-      };
-      if (config.baseBranch === 'auto') delete config.baseBranch;
-      config.gateCommands = config.gateCommands === 'none' ? [] : [config.gateCommands];
-      await configure(root, config);
-      console.log(`Created ${root}/.workflow-skills.json. Commands are guidance for agents, not executed by the installer.`);
-      return;
-    }
     const split = value => value.split(',').map(x => x.trim()).filter(Boolean);
-    let names = options['--skill'] ? split(options['--skill']) : undefined;
+    const names = options['--skill'] ? split(options['--skill']) : undefined;
     let agentNames = options['--agent'] ? split(options['--agent']) : Object.keys(agents);
-    if (interactive && command === 'add') {
-      names ??= split(await ask('Skills (comma separated)', (await available()).join(',')));
-      if (!options['--agent'] && !options['--skills-dir']) agentNames = split(await ask('Agents (comma separated)', Object.keys(agents).join(',')));
+    if (interactive && command === 'add' && !options['--agent'] && !options['--skills-dir']) {
+      agentNames = split(await ask('Agents (comma separated)', Object.keys(agents).join(',')));
     }
     const args = { command, root, names, agentNames, skillsDir: options['--skills-dir'] };
     const plan = await manage({ ...args, dryRun: true });

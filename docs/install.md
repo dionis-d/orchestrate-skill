@@ -1,6 +1,6 @@
-# Install the skills in a project
+# Install ship-change in a project
 
-This guide installs `ship-change` for Codex, Claude Code, ZCode, or OpenCode. The focused skills are optional. No project configuration is required.
+This guide installs `ship-change` for Codex, Claude Code, ZCode, or OpenCode. It uses the target repository's existing delivery instructions.
 
 ## Fastest option: one command
 
@@ -10,7 +10,7 @@ For Codex, Claude Code, or OpenCode, open a terminal **in your target project's 
 npx skills@latest add dionis-d/orchestrate-skill --skill ship-change
 ```
 
-Choose your agent at the prompts, then restart or refresh the agent. This command downloads the skills directly; you can skip the cloning steps below.
+Choose your agent at the prompts, then restart or refresh the agent. This command downloads the skill directly.
 
 To install `ship-change` for Codex without prompts:
 
@@ -85,11 +85,11 @@ node bin/workflow-skills.mjs list --project "../my-project"
 node bin/workflow-skills.mjs check --project "../my-project"
 ```
 
-Use the same target path as before. The selected skills should appear with status `current`. If the list is empty, confirm the target path and repeat installation. These commands verify copied files; the next step confirms the agent can load them.
+Use the same target path as before. Each copy of `ship-change` should have status `current`. If the list is empty, confirm the target path and repeat installation. These commands verify copied files. The next step confirms that the agent can load the skill.
 
 ## 6. Open the project in your agent
 
-Restart or refresh the agent and open the target project. In ZCode, use **Settings → Skills → Refresh** and enable the installed skills.
+Restart or refresh the agent and open the target project. In ZCode, use **Settings → Skills → Refresh** and enable `ship-change`.
 
 If the client allows automatic skill activation, it may choose `ship-change` for a matching request. To invoke it explicitly, select it from the agent's skills menu or ask:
 

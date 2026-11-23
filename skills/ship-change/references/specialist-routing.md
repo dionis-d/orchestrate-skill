@@ -9,16 +9,13 @@
 7. If you cannot use a mandatory procedure, record the missing evidence.
 8. Wait before a step that depends on that procedure.
 
-Use the capabilities that the client shows to select a skill. Use these examples as a guide.
+Use the capabilities that the client shows to select an optional skill. If no suitable skill is available, follow the phase steps in [Ship a change](../SKILL.md).
 
 | Phase | Capability | Example |
 | --- | --- | --- |
 | Defect diagnosis | Reproduce the failure and find its cause | `diagnosing-bugs` |
 | Test-first development | Make a test that fails before the fix | `tdd` |
-| Parallel work | Assign independent tasks and integrate the results | `orchestrate` |
-| Tests for the change | Select tests that detect the failures that can occur | `development-testing` |
 | Independent review | Examine a fixed revision against the request and rules | `code-review` |
-| Required checks | Run checks or verify the test evidence | `release-gate` |
 | PR text | Prepare the PR text | `pr` |
 
 Give the specialist one phase, its scope, the applicable rules, the revision, the workspace, and available evidence. Give the specialist the operations with approval. Tell the specialist to give you the result, evidence, and missing items. Keep delivery with the coordinator.

@@ -1,7 +1,0 @@
-interface:
-  display_name: 'Development Testing'
-  short_description: 'Tests for software changes and defects'
-  default_prompt: 'Use $development-testing to select tests for this change. Do the tests. Give the results and any missing checks.'
-
-policy:
-  allow_implicit_invocation: true

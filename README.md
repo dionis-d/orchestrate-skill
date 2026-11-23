@@ -1,17 +1,10 @@
-# Workflow skills
+# Ship a change
 
-Reusable agent skills for delivering changes across projects and technology stacks. Install `ship-change` for the complete delivery workflow. The other three skills are optional and can be installed on their own. In BB or a project with an active delivery workflow, give the existing coordinator the focused phase and keep one delivery workflow per change.
-
-| Skill | Use it to |
-| --- | --- |
-| `ship-change` | Implement, independently review, and verify a change through the project's delivery process |
-| `orchestrate` | Assign independent tasks to workers and integrate the results |
-| `development-testing` | Choose meaningful checks based on the change's risks |
-| `release-gate` | Verify a specific candidate against the checks required for its delivery phase |
+`ship-change` is an agent skill for implementing, reviewing, verifying, and delivering a repository change. It uses each repository's instructions, scripts, hooks, and CI. In BB, the parent thread coordinates the work.
 
 ## One-line installation
 
-Open a terminal in the project where you want the skills installed, then run:
+Open a terminal in the target project and run:
 
 ```sh
 npx skills@latest add dionis-d/orchestrate-skill --skill ship-change
@@ -23,7 +16,7 @@ Manage this installation with `npx skills@latest list`, `npx skills@latest updat
 
 ## Local installer (including ZCode)
 
-**New to these skills? Follow the [step-by-step installation guide](docs/install.md).** It explains where to run each command, what to enter at the prompts, and how to confirm the agent can load the skills.
+**Follow the [step-by-step installation guide](docs/install.md)** for commands, prompts, and discovery checks.
 
 Requires Node.js 22 or newer and Git to clone the repository. Replace `../my-project` with your target project's path.
 
@@ -51,15 +44,9 @@ For updates, removal, user-wide installation, and troubleshooting, read the [ful
 
 Choose one installer for each installation. The [full guide](docs/guide.md#alternative-skills-cli) explains how the two managers differ.
 
-## Project setup
+## How it works
 
-No configuration is required. Skills discover repository instructions, commands, and CI. Optionally save project preferences:
-
-```sh
-node bin/workflow-skills.mjs init --project ../my-project
-```
-
-Workers run focused checks in isolated workspaces. The coordinator handles independent review when policy or risk calls for it and verifies the integrated result. See [how the skills work together](docs/guide.md#how-the-skills-work-together).
+The skill turns the request into acceptance criteria, makes the change, checks the integrated branch, and delivers it through the last authorized step. A coordinator can split independent tasks between workers. When the repo or the risk calls for independent review, a separate reviewer checks the integrated change against the request and repo rules. See the [delivery workflow](docs/guide.md#delivery-workflow).
 
 ## Contributing
 

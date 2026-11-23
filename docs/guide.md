@@ -2,7 +2,7 @@
 
 For a first installation, follow the shorter [installation walkthrough](install.md). This page covers additional options and ongoing management.
 
-Install `ship-change` for the complete workflow. Install a focused skill separately if you want to use it for a particular phase.
+Install `ship-change` to use the delivery workflow in any supported repository.
 
 ## 1. Prepare the two folders
 
@@ -45,10 +45,10 @@ The installer asks for:
 
 It copies the skill instructions, references, metadata, and license. It records ownership in the target project's `.workflow-skills-lock.json`. Existing unmanaged or edited copies are preserved: a collision stops installation.
 
-To install only the testing skill for Codex, for example:
+To install for Codex only:
 
 ```sh
-node bin/workflow-skills.mjs add --project ../my-project --agent codex --skill development-testing
+node bin/workflow-skills.mjs add --project ../my-project --agent codex
 ```
 
 For automation, inspect a plan first, then apply it without prompting:
@@ -80,22 +80,18 @@ Restart or refresh the agent, open the target project, and look for the installe
 
 Codex and OpenCode share a single copy. OpenCode also reads Claude-compatible directories, so selecting both Codex and Claude can expose the same skill name through multiple sources. Select only OpenCode when installing for OpenCode alone.
 
-## 4. Use the skills
+## 4. Use ship-change
 
-Clients that allow automatic skill activation may choose `ship-change` for matching delivery requests. Use an explicit invocation to select it yourself. The examples below include optional focused skills for individual phases.
+Clients that allow automatic skill activation may choose `ship-change` for matching delivery requests. To select it yourself, ask, “Use ship-change to implement this fix and prepare a verified PR.”
 
-| Task | Example request |
-| --- | --- |
-| Deliver a change from request through verification | “Use ship-change to implement this fix and prepare a verified PR.” |
-| Implement several independent tasks | “Use orchestrate for these tickets. Keep reviewed branches local for now.” |
-| Develop or review a behavior change | “Use development-testing to verify this fix, including a regression for the reported failure.” |
-| Check the final result | “Use release-gate to run this project's required checks and report any missing evidence.” |
+### Delivery workflow
 
-### How the skills work together
+1. Set the scope from the request and repository instructions. Find the base revision, acceptance criteria, and authorized delivery steps. Discover checks from project scripts, hooks, and CI.
+2. Make the change and run focused checks. When the coordinator delegates, each worker gets one task and a separate writable workspace for parallel work.
+3. Review the integrated change against the request and repository rules. Use independent review when required by the repository or risk. Run the required checks on the integrated candidate and reuse evidence that the repository accepts for that candidate.
+4. Deliver through the authorized step. Use one PR for the integrated change when a PR is in scope. Report the revision, review, check results, and any missing evidence.
 
-Use one delivery coordinator per change. In BB, keep coordination in the parent thread. If an active project workflow owns delivery, use the skills for the assigned work. `ship-change` uses the repository's procedure first and can select a compatible specialist for an unassigned phase.
-
-Give each worker one task, an isolated writable workspace, a base revision, and focused checks. Do work that shares writable resources in sequence. The coordinator integrates the work and gets independent review when rules or risk make it necessary. If you cannot get that review, record the gap and wait before a step that requires it.
+In BB, the parent thread coordinates integration, final checks, and delivery. On other clients, the active project workflow or session can coordinate. Use any suitable specialist already available in the client for an unassigned phase.
 
 The project specifies when checks must pass. Reuse evidence only when the project accepts it for the candidate and environment. The [candidate checks](../skills/ship-change/references/verification.md) describe what to do if a project requires a test on a clean commit before opening a PR.
 
@@ -119,10 +115,12 @@ If `check` reports an update, its nonzero exit is expected; run the following co
 Remove one skill from its recorded destinations:
 
 ```sh
-node bin/workflow-skills.mjs remove --project ../my-project --skill release-gate
+node bin/workflow-skills.mjs remove --project ../my-project --skill ship-change
 ```
 
 Omit `--skill` to remove every copy managed by this installer in the chosen scope. Removal preserves unrelated skills and project configuration. Add `--yes` only when the intended removal is already explicit.
+
+If you installed an earlier version, use `list` to find any retired skills. Remove the listed copies of `orchestrate`, `development-testing`, and `release-gate` with the installer that added them. Then update `ship-change`. Move any project delivery preferences you want to keep into the repository's existing instructions.
 
 ## Other installation options
 
@@ -159,26 +157,6 @@ node bin/workflow-skills.mjs add --project ../my-project --skills-dir .other-age
 ```
 
 Use either `--agent` or `--skills-dir`. The destination must be inside the target project and must not overlap the source skills. Other harnesses must support standard skill folders or explicitly read the entrypoint; copying files alone cannot add a missing capability.
-
-## Optional project preferences
-
-```sh
-node bin/workflow-skills.mjs init --project ../my-project
-```
-
-This creates `.workflow-skills.json` without overwriting an existing file. You can edit it and commit it with the target project:
-
-```json
-{
-  "version": 1,
-  "baseBranch": "develop",
-  "taskSource": "docs/tickets",
-  "gateCommands": ["make check"],
-  "endgame": "local-branches"
-}
-```
-
-Replace these examples with actual project choices. Omit `baseBranch` for discovery and leave `gateCommands` empty to discover checks from project instructions and CI. The installer never runs these commands. Preferences do not authorize publishing, merging, or deployment; explicit user instructions and repository rules take precedence.
 
 ## Alternative: skills CLI
 
