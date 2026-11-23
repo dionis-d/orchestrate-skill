@@ -4,9 +4,7 @@ import { available, sourceRoot, tree } from '../lib/manager.mjs';
 
 const problems = [];
 const names = await available();
-for (const expected of ['orchestrate', 'development-testing', 'release-gate', 'ship-change']) {
-  if (!names.includes(expected)) problems.push(`Missing required skill: ${expected}`);
-}
+if (names.length !== 1 || names[0] !== 'ship-change') problems.push('Expected ship-change as the only bundled skill');
 for (const name of names) {
   const root = resolve(sourceRoot, name);
   const files = await tree(root);

@@ -1,7 +1,7 @@
 {
   "name": "@dionis-d/workflow-skills",
   "version": "1.0.0",
-  "description": "Portable orchestration, development testing, and release gate agent skills",
+  "description": "Install ship-change, a portable agent skill for repository changes",
   "type": "module",
   "license": "MIT",
   "engines": { "node": ">=22" },

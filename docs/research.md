@@ -13,11 +13,11 @@ Researched 2026-10-07. Sources below are primary project documentation, not thir
 
 ## Portability decisions
 
-Four independently installable skills cover delivery coordination, worker orchestration, focused testing, and phase-specific verification. Each has portable instructions and optional OpenAI display metadata. Repository command and environment discovery lets the same skills work across projects.
+`ship-change` covers delivery coordination, worker orchestration, focused testing, and final verification. It uses repository instructions and discovers commands and environments from project scripts, hooks, and CI.
 
-The orchestration entrypoint covers worker setup and integration. A worker brief records the workspace, scope, and expected result. One delivery coordinator owns the integrated checks. Independent review is necessary when project rules or risk call for it. Available client tools can supply isolation and review.
+One coordinator owns integration and the final checks. Each worker receives a task, a workspace, and an expected result. Independent review is necessary when project rules or risk call for it. Available client tools can supply workspace isolation and review.
 
-The release gate discovers required project checks rather than assuming a package manager, language, directory layout, or fixed command. It includes build/config/dependency risks and distinguishes pass/fail/incomplete/not-applicable evidence. A local pass does not guarantee a successful production release.
+The target repository determines which checks apply, when to run them, and what evidence is acceptable for each delivery step.
 
 ## Installer choices
 

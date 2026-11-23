@@ -1,6 +1,0 @@
-interface:
-  display_name: 'Orchestrate'
-  short_description: 'Independent tasks and isolated workspaces'
-  default_prompt: 'Use $orchestrate for these independent tasks. Give me the integrated revision and check results.'
-policy:
-  allow_implicit_invocation: true

@@ -1,7 +1,7 @@
 # Do the candidate checks
 
 1. Find the revision or artifact for the next step in the repository rules.
-2. Find the commands, inputs, dependencies, and environment for its checks.
+2. Identify the command, working directory, inputs, dependencies, and environment for each check.
 3. Before a check, examine the command and the programs it starts for effects outside the approved scope.
 4. If a command has such effects, use a check-only command that the repository accepts.
 5. If there is no such command, record the missing check.

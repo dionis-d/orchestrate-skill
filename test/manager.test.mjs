@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { promisify } from 'node:util';
 import { execFile } from 'node:child_process';
-import { manage, inspect, readLock, configure, sourceRoot } from '../lib/manager.mjs';
+import { manage, inspect, readLock, sourceRoot } from '../lib/manager.mjs';
 
 const exec = promisify(execFile);
 async function fixture(t) {
@@ -61,16 +61,16 @@ test('unmanaged collision preflights the whole batch before writing', async t =>
   await assert.rejects(access(join(f.root, '.agents/skills/demo')));
 });
 
-test('remove preserves unrelated skills and configuration', async t => {
+test('remove preserves unrelated skills and project files', async t => {
   const f = await fixture(t);
   await manage({ ...f, command: 'add', agentNames: ['zcode'] });
   await mkdir(join(f.root, '.zcode/skills/unrelated'));
   await writeFile(join(f.root, '.zcode/skills/unrelated/SKILL.md'), 'Keep');
-  await configure(f.root, { gateCommands: ['make check'] });
+  await writeFile(join(f.root, 'AGENTS.md'), 'Run make check.');
   await manage({ ...f, command: 'remove' });
   assert.equal((await readLock(f.root)).entries.length, 0);
   assert.equal(await readFile(join(f.root, '.zcode/skills/unrelated/SKILL.md'), 'utf8'), 'Keep');
-  assert.deepEqual(JSON.parse(await readFile(join(f.root, '.workflow-skills.json'), 'utf8')).gateCommands, ['make check']);
+  assert.equal(await readFile(join(f.root, 'AGENTS.md'), 'utf8'), 'Run make check.');
 });
 
 test('dry run does not create installation or manifest', async t => {
@@ -119,13 +119,6 @@ test('missing managed directory is reported and can be restored by update', asyn
   assert.equal((await inspect(f.root, f.source))[0].status, 'current');
 });
 
-test('configuration refuses to overwrite existing project choices', async t => {
-  const f = await fixture(t);
-  await configure(f.root, { baseBranch: 'develop' });
-  await assert.rejects(configure(f.root, { baseBranch: 'main' }), /already exists/);
-  assert.equal(JSON.parse(await readFile(join(f.root, '.workflow-skills.json'), 'utf8')).baseBranch, 'develop');
-});
-
 test('exclusive install guard refuses concurrent writes', async t => {
   const f = await fixture(t);
   await writeFile(join(f.root, '.workflow-skills-installing'), 'other process');
@@ -133,16 +126,33 @@ test('exclusive install guard refuses concurrent writes', async t => {
   assert.equal(await readFile(join(f.root, '.workflow-skills-installing'), 'utf8'), 'other process');
 });
 
-test('real CLI installs all four skills, checks them, and removes a selected skill', async t => {
+test('real CLI installs only ship-change across the selected harnesses', async t => {
   const f = await fixture(t);
   const cli = resolve('bin/workflow-skills.mjs');
   await exec(process.execPath, [cli, 'add', '--project', f.root, '--agent', 'codex,zcode', '--yes']);
   const rows = await inspect(f.root, sourceRoot);
-  assert.equal(rows.length, 8);
+  assert.deepEqual(rows.map(row => row.name), ['ship-change', 'ship-change']);
   assert.ok(rows.every(row => row.status === 'current'));
   await exec(process.execPath, [cli, 'check', '--project', f.root]);
-  await exec(process.execPath, [cli, 'remove', '--project', f.root, '--skill', 'orchestrate', '--yes']);
-  assert.equal((await inspect(f.root)).length, 6);
+});
+
+test('real CLI upgrades an older ship-change installation with a retired managed skill', async t => {
+  const f = await fixture(t);
+  const cli = resolve('bin/workflow-skills.mjs');
+  const entrypoint = 'ship-change/SKILL.md';
+  await mkdir(join(f.source, 'ship-change'));
+  await writeFile(join(f.source, entrypoint), 'Older ship-change');
+  await manage({ ...f, command: 'add', agentNames: ['codex'] });
+  const before = await inspect(f.root);
+  assert.deepEqual(before.map(row => [row.name, row.status]), [
+    ['demo', 'source unavailable'],
+    ['ship-change', 'update available'],
+  ]);
+  await exec(process.execPath, [cli, 'remove', '--project', f.root, '--skill', 'demo', '--yes']);
+  await exec(process.execPath, [cli, 'update', '--project', f.root, '--skill', 'ship-change', '--yes']);
+  await assert.rejects(access(join(f.root, '.agents/skills/demo')));
+  assert.deepEqual(await readFile(join(f.root, '.agents/skills', entrypoint)), await readFile(join(sourceRoot, entrypoint)));
+  await exec(process.execPath, [cli, 'check', '--project', f.root]);
 });
 
 test('real CLI installs ship-change by itself into a BB skill directory', async t => {
@@ -163,11 +173,13 @@ test('real CLI installs ship-change by itself into a BB skill directory', async 
   }
 });
 
-test('CLI fails on missing option values, conflicting scope, and unexpected input', async () => {
+test('CLI fails on missing option values, conflicting scope, and unexpected input', async t => {
+  const f = await fixture(t);
   const cli = resolve('bin/workflow-skills.mjs');
   for (const args of [['add', '--project'], ['add', '--global', '--project', '.'], ['add', '--bogus']]) {
     await assert.rejects(exec(process.execPath, [cli, ...args]), error => error.code === 1);
   }
+  await assert.rejects(exec(process.execPath, [cli, 'init', '--project', f.root, '--yes']), /Unknown command: init/);
 });
 
 test('custom destination cannot nest inside a source skill', async t => {
@@ -188,24 +200,9 @@ test('removal works after the source checkout is no longer available', async t =
   await assert.rejects(access(join(f.root, '.agents/skills/demo')));
 });
 
-test('concurrent project setup preserves exactly one caller configuration', async t => {
-  const f = await fixture(t);
-  const results = await Promise.allSettled([
-    configure(f.root, { baseBranch: 'first' }),
-    configure(f.root, { baseBranch: 'second' }),
-  ]);
-  assert.equal(results.filter(result => result.status === 'fulfilled').length, 1);
-  const config = JSON.parse(await readFile(join(f.root, '.workflow-skills.json'), 'utf8'));
-  assert.ok(['first', 'second'].includes(config.baseBranch));
-});
-
-test('CLI supports unattended project setup and refuses conflicting destinations', async t => {
+test('CLI refuses conflicting destinations', async t => {
   const f = await fixture(t);
   const cli = resolve('bin/workflow-skills.mjs');
-  await exec(process.execPath, [cli, 'init', '--project', f.root, '--yes']);
-  const config = JSON.parse(await readFile(join(f.root, '.workflow-skills.json'), 'utf8'));
-  assert.equal(config.endgame, 'local-branches');
-  assert.deepEqual(config.gateCommands, []);
   await assert.rejects(exec(process.execPath, [cli, 'add', '--project', f.root, '--agent', 'codex', '--skills-dir', '.custom/skills', '--yes']), error => error.code === 1);
 });
 

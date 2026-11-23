@@ -1,6 +1,0 @@
-interface:
-  display_name: 'Release Gate'
-  short_description: 'Checks for the next delivery step'
-  default_prompt: 'Use $release-gate for this candidate. Give me the check results for the next step.'
-policy:
-  allow_implicit_invocation: true
