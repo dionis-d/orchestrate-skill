@@ -114,11 +114,24 @@ If you installed an earlier version, remove the retired copies with the installe
 node bin/workflow-skills.mjs remove --project ../my-project --skill orchestrate,development-testing,release-gate
 ```
 
-If a retired copy has local edits, the installer preserves it. You can still update `ship-change` by name with the commands below. If you used `.workflow-skills.json`, move any preferences you want to keep into the repository's existing instructions.
+If a retired copy has local edits, the installer preserves it. You can still install or update `ship-change` by name. If you used `.workflow-skills.json`, move any preferences you want to keep into the repository's existing instructions.
+
+If `list` shows no managed copy of `ship-change`, install it in the same scope. For a project installation, use:
+
+```sh
+node bin/workflow-skills.mjs add --project ../my-project --skill ship-change
+```
+
+If `list` shows a managed copy of `ship-change`, use:
 
 ```sh
 node bin/workflow-skills.mjs update --project ../my-project --skill ship-change --dry-run
 node bin/workflow-skills.mjs update --project ../my-project --skill ship-change
+```
+
+After installation or update, check the managed copies:
+
+```sh
 node bin/workflow-skills.mjs check --project ../my-project
 ```
 
