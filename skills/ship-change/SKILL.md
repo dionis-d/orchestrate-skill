@@ -67,8 +67,9 @@ After the applicable review and corrections, do the full set of necessary reposi
 
 If the revision or test inputs change, do these steps.
 
-1. If independent review applies, ask the independent reviewer to examine the changes again.
-2. Do the checks for those changes and the checks that the repository rules specify again.
+1. If the revision changes, compare the edits with the request and repository rules.
+2. If independent review applies, ask the independent reviewer to examine the changes again.
+3. Do the checks for those changes and the checks that the repository rules specify again.
 
 If a PR is necessary for a check, do the check after you open the PR.
 
@@ -83,8 +84,10 @@ Do each operation after all applicable reviews, checks, and approvals for that o
 3. If a push or merge can cause a deployment, get approval for the deployment before that operation.
 4. If the rules specify a test on a clean commit, do the [clean commit checks](references/verification.md#checks-for-a-clean-commit) at the specified step.
 5. Before you open a PR, complete the checks and reviews that the repository specifies for PR creation.
-6. If the PR creation rules let you use a draft PR for checks or review, use one.
-7. If PR creation has approval and the task has no PR, open one after the applicable reviews and checks. If a PR update has approval and the task has a PR, update it after the applicable reviews and checks.
+6. If PR creation has approval and the task has no PR, use these steps.
+   1. If the PR creation rules let you use a draft PR for checks or review, select the draft option.
+   2. After the applicable reviews and checks, open the PR.
+7. If a PR update has approval and the task has a PR, update it after the applicable reviews and checks.
 8. Before a readiness update, merge, or release, compare the records for the candidate with the rules for that step.
 9. Before you merge or deploy, get approval for that operation.
 10. If only an operator can do a step, give that person the result and the remaining steps.

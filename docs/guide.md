@@ -98,8 +98,9 @@ After the applicable review and corrections, do the full set of necessary reposi
 
 If the revision or test inputs change, do these steps.
 
-1. If independent review applies, ask the independent reviewer to examine the changes again.
-2. Do the checks for those changes and the checks that the repository rules specify again.
+1. If the revision changes, compare the edits with the request and repository rules.
+2. If independent review applies, ask the independent reviewer to examine the changes again.
+3. Do the checks for those changes and the checks that the repository rules specify again.
 
 If a PR is necessary for a check, do the check after you open the PR. See [candidate checks](../skills/ship-change/references/verification.md) for clean commit checks and test resources.
 
