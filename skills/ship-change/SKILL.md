@@ -33,7 +33,7 @@ Before you do a check, use [candidate checks](references/verification.md).
 
 If you can delegate and have approval to do so, give each worker one task with acceptance criteria. Give each worker the base revision, file scope, and focused checks. Give each worker the rules for checks and external effects.
 
-If workers have independent tasks and isolated writable workspaces, do those tasks at the same time. If tasks depend on each other or use a shared writable resource, do them in sequence. Integrate all changes for the full task on one branch.
+If tasks depend on each other or use a shared writable resource, do them in sequence. For other tasks that you give to workers, give each worker its own isolated writable workspace. Do these tasks at the same time. Integrate all changes for the full task on one branch.
 
 Each worker gives the delivery coordinator the revision, focused checks, results, and missing evidence.
 
@@ -45,14 +45,15 @@ Before you open a pull request (PR), complete independent review. This rule also
 
 ### Independent review
 
-If you get independent review, use this procedure. Use an independent person or agent who made no changes to the candidate. If you use an agent reviewer, use a new context. Give the reviewer the base revision, candidate revision, acceptance criteria, and applicable rules.
+If you get independent review, use this procedure. Use an independent person or agent who made no changes to the candidate. If you use an agent reviewer, use a new context. Give the reviewer the base revision, candidate revision, acceptance criteria, and applicable rules. Give the reviewer the available check records. If you used workers, include their check results. Give the reviewer the list of missing checks and results.
 
 1. Ask the reviewer to examine the integrated diff. Ask the reviewer to examine the effects of the changes on each other.
 2. Ask for one report with all problems that you must correct. For each problem, ask for the expected behavior and a check for the correction.
-3. If possible, use a focused check that fails before the correction and passes after it.
-4. Correct the defects. Give the new candidate and check results to the independent reviewer.
-5. Ask the reviewer to examine the corrections and all other edits since the last review. Include the behavior that these edits can change in the review scope. If an earlier review result changes, include the related changes and behavior in the review scope.
-6. Do these review steps again until there are no problems that you must correct.
+3. If the report has no problems that you must correct, go to the repository checks.
+4. If possible, do a focused check before each correction. Make sure that the check shows the problem in the report.
+5. Correct the defects.
+6. Do each check from step 4 again. Make sure that each check shows the expected behavior.
+7. Give the new candidate and check results to the independent reviewer. For this review, examine only the edits since the last review and their effects. If an earlier review result changes, include the related changes and behavior in the review scope. Go to step 2.
 
 If independent review is necessary and unavailable, record the missing evidence. Wait before any step that requires that review.
 
@@ -62,7 +63,7 @@ Access control, possible data loss, and recovery problems can make independent r
 
 Before you do a check or give it to a worker, examine the check records. Examine worker results as part of these records. If the records agree with the rules for the step, candidate, test scope, inputs, and environment, use them again. If no check records apply, do the check at the step in the repository instructions.
 
-Complete the applicable review and corrections first. Then the coordinator does the full set of necessary repository checks once on the last integrated revision.
+After the applicable review and corrections, do the full set of necessary repository checks once on the last integrated revision. Follow the sequence in the repository instructions. Before you open a PR, complete all of these checks that can start without a PR.
 
 If the revision or test inputs change, do these steps.
 
@@ -83,7 +84,7 @@ Do each operation after all applicable reviews, checks, and approvals for that o
 4. If the rules specify a test on a clean commit, do the [clean commit checks](references/verification.md#checks-for-a-clean-commit) at the specified step.
 5. Before you open a PR, complete the checks and reviews that the repository specifies for PR creation.
 6. If the PR creation rules let you use a draft PR for checks or review, use one.
-7. If a PR is in scope, use these steps after the applicable reviews, checks, and approvals are complete. If the task has no PR, open one for the full task. If the task already has a PR, update it.
+7. If a PR is in scope, complete the applicable reviews, checks, and approvals for this operation. If the full task has no PR, open one. If the task already has a PR, update it.
 8. Before a readiness update, merge, or release, compare the records for the candidate with the rules for that step.
 9. Before you merge or deploy, get approval for that operation.
 10. If only an operator can do a step, give that person the result and the remaining steps.
