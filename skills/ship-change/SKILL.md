@@ -5,7 +5,7 @@ description: Use to implement and deliver a repository change. Use also to prepa
 
 # Ship a change
 
-Use one delivery coordinator for the change. In BB, the parent thread owns integration, final checks, and delivery. If a coordinator assigns you a task, do that task. Return the result to the coordinator.
+Use one delivery coordinator for the change. In BB, the parent thread is responsible for integration, final checks, and delivery. If a coordinator gives you a task, do that task. Return the result to the coordinator.
 
 ## 1. Set the scope
 
@@ -31,15 +31,15 @@ Before any checks, including focused and worker checks, use [candidate checks](r
 5. Make a small change that gives the necessary result.
 6. Do the focused checks after the change.
 
-When delegation is available and permitted, give each worker one implementation task. In BB, the parent thread assigns one task with acceptance criteria to each implementation child thread. Give each worker the base revision, file scope, acceptance criteria, and focused checks. Give each worker the rules for checks and external effects.
+If you can delegate and have approval to do so, give each worker one implementation task. In BB, the parent thread gives one task with acceptance criteria to each implementation child thread. Give each worker the base revision, file scope, acceptance criteria, and focused checks. Give each worker the rules for checks and external effects.
 
-Run independent BB tasks in parallel. For parallel work, give each worker an isolated writable workspace. If tasks depend on each other or use a shared writable resource, do them in sequence. Integrate all changes for the assignment on one branch.
+In BB, do independent tasks at the same time. Before workers start work at the same time, give each worker an isolated writable workspace. If tasks depend on each other or use a shared writable resource, do them in sequence. Integrate all changes for the parent task on one branch.
 
 Each worker reports the revision, focused checks, results, and missing evidence to the delivery coordinator.
 
 ## 3. Review and verify
 
-Compare the integrated diff with the request and repository rules. Outside BB, use independent review when the repository rules or risk make it necessary. If an independent review finds a defect, get independent review of the correction on the new candidate.
+Compare the integrated diff with the request and repository rules. Outside BB, if the repository rules or risk make independent review necessary, get independent review. Correct important defects from the review. If independent review found a defect, get independent review of the correction on the new candidate.
 
 For independent review, use a reviewer who made no changes to the candidate. Use a new context for an agent reviewer. Give the reviewer the base revision, candidate revision, acceptance criteria, and applicable rules.
 
@@ -47,39 +47,39 @@ In BB, complete these steps before you open any pull request (PR), including a d
 
 1. Use a separate review thread.
 2. Ask the reviewer to examine the integrated diff and how the changes work together.
-3. Ask for one report with all findings that need action. For each finding, ask for the expected behavior and a check for the correction.
+3. Ask for one report with all problems that you must correct. For each problem, ask for the expected behavior and a check for the correction.
 4. If possible, use a focused check that fails before the correction and passes after it.
 5. Correct the defects. Give the new candidate and check results to the independent reviewer.
-6. Ask the reviewer to examine the corrections and all other edits since the last review. Include the behavior that these edits can change in the review scope. If an earlier conclusion changes, increase the review scope to include the related changes and behavior.
-7. Repeat until the review has no findings that need action.
+6. Ask the reviewer to examine the corrections and all other edits since the last review. Include the behavior that these edits can change in the review scope. If an earlier review result changes, include the related changes and behavior in the review scope.
+7. Do these review steps again until there are no problems that you must correct.
 
 If independent review is necessary and unavailable, record the missing evidence. Wait before any step that requires that review.
 
 Access control, possible data loss, and recovery problems can make independent review necessary.
 
-Before you do or assign a check, examine the available evidence, including worker results. Use evidence that meets the rules for the step, candidate, test scope, inputs, and environment. Do checks that have no applicable evidence at the steps in the repository instructions.
+Before you do a check or give it to a worker, examine the check records, including worker results. If the records agree with the rules for the step, candidate, test scope, inputs, and environment, use them again. If no check records apply, do the check at the step in the repository instructions.
 
-In BB, complete the review and corrections first. Then the parent thread runs the full set of required repository checks once on the final PR revision. If the revision or test inputs change, repeat the applicable review. Repeat the affected checks and any checks that the repository rules require.
+In BB, complete the review and corrections first. Then the parent thread does the full set of necessary repository checks once on the final PR revision. If the revision or test inputs change, do the applicable review again. Do the checks for those changes and the checks that the repository rules specify again.
 
-Run checks that require a PR after you open it.
+If a check needs a PR, do the check after you open the PR.
 
-On other clients, the coordinator gets results for all required checks on the integrated candidate. If the candidate or test inputs change, do the applicable checks again.
+On other clients, the coordinator gets results for all necessary checks on the integrated candidate. If the candidate or test inputs change, do the applicable checks again.
 
 ## 4. Deliver the result
 
+Before each external operation, examine its scripts and triggers for effects outside the approved scope. Get approval for the operation and its effects. If the user gave standing approval for routine pushes and PRs, use it within the approved scope.
+
+Do each operation after all applicable reviews, checks, and approvals for that operation are complete.
+
 1. If you have approval and the commit checks give the necessary results, make the commit.
 2. Before each push, examine all outgoing commits for secrets and changes outside the scope.
-3. Before an external operation, examine its scripts and triggers for effects outside the approved scope.
-4. If you have approval for the effects of an external operation, do the operation.
-5. If a push or merge can cause a deployment, get approval for the deployment before that operation.
-6. If the rules specify a test on a clean commit, do the [clean commit checks](references/verification.md#checks-for-a-clean-commit).
-7. Before you open a PR, complete the review and checks that PR creation requires. In BB, complete independent review even if the repository also requires review on the PR.
-8. Use a draft PR when it makes checks or review possible and the creation rules permit it.
-9. If you have approval and the checks give the necessary results, open or update one PR for the change. In BB, use one PR for the full parent assignment.
-10. Before a readiness update, merge, or release, compare the evidence with the requirements for that step and candidate.
-11. Merge or deploy only with approval for that operation.
-12. If only an operator can do a step, give that person the result and the remaining steps.
-
-If the user gave standing approval for routine pushes and PRs, use that approval within its scope. Get approval for any external effects outside that scope.
+3. If a push or merge can cause a deployment, get approval for the deployment before that operation.
+4. If the rules specify a test on a clean commit, do the [clean commit checks](references/verification.md#checks-for-a-clean-commit) at the specified step.
+5. Before you open a PR, complete the review and checks that the repository specifies for PR creation. In BB, complete independent review before PR creation, including when the repository specifies additional review on the PR.
+6. If the PR creation rules let you use a draft PR for checks or review, use one.
+7. After the applicable approval, review, and checks are complete, open or update one PR for the change. In BB, use one PR for the full parent task.
+8. Before a readiness update, merge, or release, compare the records for the candidate with the rules for that step.
+9. Before you merge or deploy, get approval for that operation.
+10. If only an operator can do a step, give that person the result and the remaining steps.
 
 Give the user the revision or PR, review result, check results, and missing evidence. If a step cannot start, continue other work in the approved scope.

@@ -87,21 +87,21 @@ Clients that allow automatic skill activation may choose `ship-change` for match
 ### Delivery workflow
 
 1. Set the scope from the request and repository instructions. Find the base revision, acceptance criteria, and approved delivery steps. Identify checks in project scripts, hooks, and CI.
-2. Make the change. Run focused checks. If the coordinator delegates, give each worker one task with acceptance criteria. Use isolated writable workspaces for parallel tasks. Integrate the changes on one branch. Each worker reports the revision, focused checks, results, and missing evidence.
-3. Review the integrated change against the request and repository rules. Use independent review when the repository rules or risk make it necessary. Reuse evidence that meets the requirements for the step, candidate, scope, inputs, and environment.
+2. Make the change. Do focused checks. If the coordinator delegates, give each worker one task with acceptance criteria. If workers work at the same time, use isolated writable workspaces. Integrate the changes on one branch. Each worker reports the revision, focused checks, results, and missing evidence.
+3. Review the integrated change against the request and repository rules. If the repository rules or risk make independent review necessary, get independent review. Correct important defects. Get results for all necessary checks on the integrated revision. If check records agree with the rules for the step, candidate, test scope, inputs, and environment, use them again.
 4. Deliver through the last approved step. Report the revision, review result, check results, and missing evidence.
 
-In BB, the parent thread owns integration, final checks, and delivery. It assigns one task with acceptance criteria to each implementation child thread. It runs independent tasks in parallel. A separate reviewer examines the integrated diff and how the changes work together before any PR, including a draft PR.
+In BB, the parent thread is responsible for integration, final checks, and delivery. It gives one task with acceptance criteria to each implementation child thread. Workers do independent tasks at the same time. Before any PR, get independent review in a separate thread. This rule also applies to draft PRs. The reviewer examines the integrated diff and how the changes work together.
 
-In BB, the reviewer gives one report with all findings that need action. Each finding gives the expected behavior and a check for the correction. If possible, use a focused check that fails before the correction and passes after it. The reviewer examines the corrections and all other edits since the last review. The review includes the behavior that these edits can change. If an earlier conclusion changes, increase the review scope. Continue until the review has no findings that need action.
+In BB, the reviewer gives one report with all problems that you must correct. For each problem, the report gives the expected behavior and a check for the correction. If possible, use a focused check that fails before the correction and passes after it. The reviewer examines the corrections and all other edits since the last review. The review includes the behavior that these edits can change. If an earlier review result changes, include the related changes and behavior in the review scope. Continue until there are no problems that you must correct.
 
-In BB, run the full set of required repository checks once on the final PR revision after review and corrections. Run checks that require a PR after you open it. If the revision or test inputs change, repeat the affected checks and any checks that the repository rules require. See [candidate checks](../skills/ship-change/references/verification.md) for clean commit checks and test resources.
+In BB, complete the review and corrections first. Then do the full set of necessary repository checks once on the final PR revision. If the revision or test inputs change, do the applicable review again. Do the checks for those changes and the checks that the repository rules specify again. If a check needs a PR, do the check after you open the PR. See [candidate checks](../skills/ship-change/references/verification.md) for clean commit checks and test resources.
 
-Use one PR for the full parent assignment in BB. Use standing approval for routine pushes and PRs if the user gave it. Examine scripts and remote triggers before operations that can affect other systems. Get approval for effects outside the approved scope. Get approval for merge and deployment.
+In BB, use one PR for the full parent task. If the user gave standing approval for routine pushes and PRs, use it within the approved scope. Before external operations, examine scripts and remote triggers for effects on other systems. Get approval for effects outside the approved scope. Get approval for merge and deployment.
 
-On other clients, the active project workflow or session can coordinate the work. Use a specialist that is available in the client for an unassigned phase.
+On other clients, the active project workflow or session can coordinate the work. If the client has a specialist for a phase with no worker, use that specialist.
 
-Use [ASD-STE100 Issue 9](../skills/ship-change/references/technical-english.md) for new or changed English technical text when the repository and user permit it. Keep required templates, commands, names, and quotations.
+If the repository and user let you, use [ASD-STE100 Issue 9](../skills/ship-change/references/technical-english.md) for new or changed English technical text. Keep the specified templates, commands, names, and quotations.
 
 ## 5. Update or remove copies
 
