@@ -48,7 +48,7 @@ Choose one installer for each installation. The [full guide](docs/guide.md#alter
 
 One coordinator manages the change on one branch. The coordinator can make the change without workers. If the coordinator uses workers, each worker gets one task with acceptance criteria.
 
-Before you open a pull request (PR), complete independent review. This rule also applies to draft PRs. After the applicable review and corrections, do the full set of necessary repository checks once on the last integrated revision. Before you open a PR, complete all of these checks that can start without a PR. If a check needs a PR, do the check after you open the PR. If a PR is in scope, complete the applicable reviews, checks, and approvals for this operation. If the full task has no PR, open one. If the task already has a PR, update it. See the [delivery workflow](docs/guide.md#delivery-workflow).
+Before you open a pull request (PR), complete independent review. This rule also applies to draft PRs. After the applicable review and corrections, do the full set of necessary repository checks once on the last integrated revision. Follow the [repository check sequence](skills/ship-change/SKILL.md#repository-checks). If PR creation has approval and the task has no PR, open one after the applicable reviews and checks. If a PR update has approval and the task has a PR, update it after the applicable reviews and checks. See the [delivery workflow](docs/guide.md#delivery-workflow).
 
 ## Contributing
 

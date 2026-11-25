@@ -33,7 +33,7 @@ Before you do a check, use [candidate checks](references/verification.md).
 
 If you can delegate and have approval to do so, give each worker one task with acceptance criteria. Give each worker the base revision, file scope, and focused checks. Give each worker the rules for checks and external effects.
 
-If tasks depend on each other or use a shared writable resource, do them in sequence. For other tasks that you give to workers, give each worker its own isolated writable workspace. Do these tasks at the same time. Integrate all changes for the full task on one branch.
+If a task can start only after another task is complete, do the tasks in sequence. If tasks use a shared writable resource, do them in sequence. For other tasks that you give to workers, give each worker its own isolated writable workspace. Do these tasks at the same time. Integrate all changes for the full task on one branch.
 
 Each worker gives the delivery coordinator the revision, focused checks, results, and missing evidence.
 
@@ -53,7 +53,7 @@ If you get independent review, use this procedure. Use an independent person or 
 4. If possible, do a focused check before each correction. Make sure that the check shows the problem in the report.
 5. Correct the defects.
 6. Do each check from step 4 again. Make sure that each check shows the expected behavior.
-7. Give the new candidate and check results to the independent reviewer. For this review, examine only the edits since the last review and their effects. If an earlier review result changes, include the related changes and behavior in the review scope. Go to step 2.
+7. Give the new candidate and check results to the independent reviewer. Ask the independent reviewer to examine only the edits since the last review and their effects. If an earlier review result changes, include the related changes and behavior in the review scope. Go to step 2.
 
 If independent review is necessary and unavailable, record the missing evidence. Wait before any step that requires that review.
 
@@ -63,14 +63,14 @@ Access control, possible data loss, and recovery problems can make independent r
 
 Before you do a check or give it to a worker, examine the check records. Examine worker results as part of these records. If the records agree with the rules for the step, candidate, test scope, inputs, and environment, use them again. If no check records apply, do the check at the step in the repository instructions.
 
-After the applicable review and corrections, do the full set of necessary repository checks once on the last integrated revision. Follow the sequence in the repository instructions. Before you open a PR, complete all of these checks that can start without a PR.
+After the applicable review and corrections, do the full set of necessary repository checks once on the last integrated revision. Follow the sequence in the repository instructions. If you will open a PR, do the checks that the repository specifies for that step. If there is no specified step for a check without a PR, do it before PR creation.
 
 If the revision or test inputs change, do these steps.
 
-1. Do the applicable review again.
+1. If independent review applies, ask the independent reviewer to examine the changes again.
 2. Do the checks for those changes and the checks that the repository rules specify again.
 
-If a check needs a PR, do the check after you open the PR.
+If a PR is necessary for a check, do the check after you open the PR.
 
 ## 4. Deliver the result
 
@@ -84,7 +84,7 @@ Do each operation after all applicable reviews, checks, and approvals for that o
 4. If the rules specify a test on a clean commit, do the [clean commit checks](references/verification.md#checks-for-a-clean-commit) at the specified step.
 5. Before you open a PR, complete the checks and reviews that the repository specifies for PR creation.
 6. If the PR creation rules let you use a draft PR for checks or review, use one.
-7. If a PR is in scope, complete the applicable reviews, checks, and approvals for this operation. If the full task has no PR, open one. If the task already has a PR, update it.
+7. If PR creation has approval and the task has no PR, open one after the applicable reviews and checks. If a PR update has approval and the task has a PR, update it after the applicable reviews and checks.
 8. Before a readiness update, merge, or release, compare the records for the candidate with the rules for that step.
 9. Before you merge or deploy, get approval for that operation.
 10. If only an operator can do a step, give that person the result and the remaining steps.
