@@ -46,9 +46,9 @@ Choose one installer for each installation. The [full guide](docs/guide.md#alter
 
 ## How it works
 
-One coordinator manages the change on one branch. The coordinator can do the implementation without workers. If the coordinator uses workers, each worker gets one task with acceptance criteria.
+One coordinator manages the change on one branch. The coordinator can make the change without workers. If the coordinator uses workers, each worker gets one task with acceptance criteria.
 
-Before you open a pull request (PR), complete independent review. This rule also applies to draft PRs. After the applicable review and corrections, the coordinator does the necessary checks once on the last integrated revision. If PR creation has approval, the coordinator uses one PR for the full task. See the [delivery workflow](docs/guide.md#delivery-workflow).
+Before you open a pull request (PR), complete independent review. This rule also applies to draft PRs. After the applicable review and corrections, the coordinator does the necessary checks once on the last integrated revision. If a PR is in scope, use these steps after the applicable reviews, checks, and approvals are complete. If the task has no PR, open one for the full task. If the task already has a PR, update it. See the [delivery workflow](docs/guide.md#delivery-workflow).
 
 ## Contributing
 

@@ -5,7 +5,7 @@ description: Use to implement and deliver a repository change. Use also to prepa
 
 # Ship a change
 
-Use one delivery coordinator for integration, verification, and delivery. The active session can be the coordinator and do the implementation without workers. If a coordinator gives you a task, do that task. Return the result to the coordinator.
+Use one delivery coordinator for integration, verification, and delivery. The active session can be the coordinator. It can make the change without workers. If a coordinator gives you a task, do that task. Return the result to the coordinator.
 
 ## 1. Set the scope
 
@@ -31,7 +31,7 @@ Before you do a check, use [candidate checks](references/verification.md).
 5. Make a small change that gives the necessary result.
 6. Do the focused checks after the change.
 
-If you can delegate and have approval to do so, give each worker one implementation task with acceptance criteria. Give each worker the base revision, file scope, and focused checks. Give each worker the rules for checks and external effects.
+If you can delegate and have approval to do so, give each worker one task with acceptance criteria. Give each worker the base revision, file scope, and focused checks. Give each worker the rules for checks and external effects.
 
 If workers have independent tasks and isolated writable workspaces, do those tasks at the same time. If tasks depend on each other or use a shared writable resource, do them in sequence. Integrate all changes for the full task on one branch.
 
@@ -43,7 +43,9 @@ Compare the integrated diff with the request and repository rules. Correct impor
 
 Before you open a pull request (PR), complete independent review. This rule also applies to draft PRs. If there is no PR and the repository rules or risk make independent review necessary, get independent review. In other cases without a PR, you can get independent review.
 
-Use an independent person or agent who made no changes to the candidate. If you use an agent reviewer, use a new context. Give the reviewer the base revision, candidate revision, acceptance criteria, and applicable rules.
+### Independent review
+
+If you get independent review, use this procedure. Use an independent person or agent who made no changes to the candidate. If you use an agent reviewer, use a new context. Give the reviewer the base revision, candidate revision, acceptance criteria, and applicable rules.
 
 1. Ask the reviewer to examine the integrated diff. Ask the reviewer to examine the effects of the changes on each other.
 2. Ask for one report with all problems that you must correct. For each problem, ask for the expected behavior and a check for the correction.
@@ -55,6 +57,8 @@ Use an independent person or agent who made no changes to the candidate. If you 
 If independent review is necessary and unavailable, record the missing evidence. Wait before any step that requires that review.
 
 Access control, possible data loss, and recovery problems can make independent review necessary.
+
+### Repository checks
 
 Before you do a check or give it to a worker, examine the check records. Examine worker results as part of these records. If the records agree with the rules for the step, candidate, test scope, inputs, and environment, use them again. If no check records apply, do the check at the step in the repository instructions.
 
@@ -79,7 +83,7 @@ Do each operation after all applicable reviews, checks, and approvals for that o
 4. If the rules specify a test on a clean commit, do the [clean commit checks](references/verification.md#checks-for-a-clean-commit) at the specified step.
 5. Before you open a PR, complete the checks and reviews that the repository specifies for PR creation.
 6. If the PR creation rules let you use a draft PR for checks or review, use one.
-7. If PR creation is in the approved scope, use one PR for the full task.
+7. If a PR is in scope, use these steps after the applicable reviews, checks, and approvals are complete. If the task has no PR, open one for the full task. If the task already has a PR, update it.
 8. Before a readiness update, merge, or release, compare the records for the candidate with the rules for that step.
 9. Before you merge or deploy, get approval for that operation.
 10. If only an operator can do a step, give that person the result and the remaining steps.

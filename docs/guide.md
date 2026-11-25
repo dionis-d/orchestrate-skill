@@ -86,11 +86,11 @@ Clients that allow automatic skill activation may choose `ship-change` for match
 
 ### Delivery workflow
 
-Use one coordinator for integration, verification, and delivery. The active session can do the implementation without workers. Use the request and repository instructions to find the base revision, acceptance criteria, checks, and approved delivery steps.
+Use one coordinator for integration, verification, and delivery. The active session can make the change without workers. Use the request and repository instructions to find the base revision, acceptance criteria, checks, and approved delivery steps.
 
-If the coordinator uses workers, give each worker one implementation task with acceptance criteria. If workers have independent tasks and isolated writable workspaces, do those tasks at the same time. Integrate the changes on one branch. Each worker gives the coordinator the revision, focused checks, results, and missing evidence. If check records agree with the rules for the step, candidate, test scope, inputs, and environment, use them again.
+If the coordinator uses workers, give each worker one task with acceptance criteria. If workers have independent tasks and isolated writable workspaces, do those tasks at the same time. Integrate the changes on one branch. Each worker gives the coordinator the revision, focused checks, results, and missing evidence. If check records agree with the rules for the step, candidate, test scope, inputs, and environment, use them again.
 
-Before you open a pull request (PR), complete independent review. This rule also applies to draft PRs. If there is no PR and the repository rules or risk make independent review necessary, get independent review. In other cases without a PR, you can get independent review. Use a person or an agent who made no changes to the candidate. If you use an agent reviewer, use a new context.
+Before you open a pull request (PR), complete independent review. This rule also applies to draft PRs. If there is no PR and the repository rules or risk make independent review necessary, get independent review. In other cases without a PR, you can get independent review. If you get independent review, follow the review procedure below. Use a person or an agent who made no changes to the candidate. If you use an agent reviewer, use a new context.
 
 The reviewer examines the integrated diff and the effects of the changes on each other. The reviewer gives one report with all problems that you must correct. For each problem, the report gives the expected behavior and a check for the correction. If possible, use a focused check that fails before the correction and passes after it. The reviewer examines the corrections and all other edits since the last review. The review includes the behavior that these edits can change. If an earlier review result changes, include the related changes and behavior in the review scope. Continue until there are no problems that you must correct.
 
@@ -103,7 +103,7 @@ If the revision or test inputs change, do these steps.
 
 If a check needs a PR, do the check after you open the PR. See [candidate checks](../skills/ship-change/references/verification.md) for clean commit checks and test resources.
 
-If PR creation has approval, use one PR for the full task. Before external operations, examine scripts and remote triggers for effects on other systems. If the user gave standing approval for usual pushes and PRs, use it within the approved scope. Get approval for effects outside the approved scope. Get approval for merge and deployment. Give the user the revision, review result, check results, and missing evidence.
+If a PR is in scope, use these steps after the applicable reviews, checks, and approvals are complete. If the task has no PR, open one for the full task. If the task already has a PR, update it. Before external operations, examine scripts and remote triggers for effects on other systems. If the user gave standing approval for usual pushes and PRs, use it within the approved scope. Get approval for effects outside the approved scope. Get approval for merge and deployment. Give the user the revision, review result, check results, and missing evidence.
 
 See [specialist selection](../skills/ship-change/references/specialist-routing.md).
 
