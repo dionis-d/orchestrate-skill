@@ -82,22 +82,33 @@ Codex and OpenCode share a single copy. OpenCode also reads Claude-compatible di
 
 ## 4. Use ship-change
 
-Clients that allow automatic skill activation may choose `ship-change` for matching delivery requests. To select it yourself, ask, “Use ship-change to implement this fix and prepare a verified PR.”
+Clients that allow automatic skill activation may choose `ship-change` for matching delivery requests. To select it yourself, ask, “Use ship-change to implement this fix and prepare a verified pull request.”
 
 ### Delivery workflow
 
-1. Set the scope from the request and repository instructions. Find the base revision, acceptance criteria, and authorized delivery steps. Discover checks from project scripts, hooks, and CI.
-2. Make the change and run focused checks. When the coordinator delegates, each worker gets one task and a separate writable workspace for parallel work.
-3. Review the integrated change against the request and repository rules. Use independent review when required by the repository or risk. Run the required checks on the integrated candidate and reuse evidence that the repository accepts for that candidate.
-4. Deliver through the authorized step. Use one PR for the integrated change when a PR is in scope. Report the revision, review, check results, and any missing evidence.
+Use one coordinator for integration, verification, and delivery. The active session can make the change without workers. Use the request and repository instructions to find the base revision, acceptance criteria, checks, and approved delivery steps.
 
-In BB, the parent thread coordinates integration, final checks, and delivery. On other clients, the active project workflow or session can coordinate. Use any suitable specialist already available in the client for an unassigned phase.
+If the coordinator uses workers, give each worker one task with acceptance criteria. If a task can start only after another task is complete, do the tasks in sequence. If tasks use a shared writable resource, do them in sequence. For other tasks that you give to workers, give each worker its own isolated writable workspace. Do these tasks at the same time. Integrate the changes on one branch. Each worker gives the coordinator the revision, focused checks, results, and missing evidence. If check records agree with the rules for the step, candidate, test scope, inputs, and environment, use them again.
 
-The project specifies when checks must pass. Reuse evidence only when the project accepts it for the candidate and environment. The [candidate checks](../skills/ship-change/references/verification.md) describe what to do if a project requires a test on a clean commit before opening a PR.
+Before you open a pull request (PR), complete independent review. This rule also applies to draft PRs. If there is no PR and the repository rules or risk make independent review necessary, get independent review. In other cases without a PR, you can get independent review. If you get independent review, use the [review procedure](../skills/ship-change/SKILL.md#independent-review). Use a person or an agent who made no changes to the candidate. If you use an agent reviewer, use a new context. Give the reviewer the available check records. If you used workers, include their check results. Give the reviewer the list of missing checks and results.
 
-Use disposable test resources. Examine scripts and remote triggers before actions that can affect other systems. Get approval for merge and deployment.
+The reviewer examines the integrated diff and the effects of the changes on each other. The reviewer gives one report with all problems that you must correct. For each problem, the report gives the expected behavior and a check for the correction. If the report has no problems that you must correct, go to the repository checks. If possible, do a focused check before each correction. Make sure that the check shows the problem in the report. Correct the defects. Do each check again. Make sure that each check shows the expected behavior. Give the new candidate and check results to the reviewer. Ask the independent reviewer to examine the edits and their effects. If an earlier review result changes, include the related changes and behavior in the review scope. Get a new report. Apply the same clean-report or correction procedure to each new report.
 
-Use [ASD-STE100 Issue 9](../skills/ship-change/references/technical-english.md) for new or changed English technical text when the repository and user permit it. Keep required templates, commands, names, and quotations.
+After the applicable review and corrections, do the full set of necessary repository checks once on the last integrated revision. Follow the sequence in the repository instructions. If you will open a PR, do the checks that the repository specifies for that step. If there is no specified step for a check without a PR, do it before PR creation.
+
+If the revision or test inputs change, do these steps.
+
+1. If the revision changes, compare the edits with the request and repository rules.
+2. If independent review applies, ask the independent reviewer to examine the changes again.
+3. Do the checks for those changes and the checks that the repository rules specify again.
+
+If a PR is necessary for a check, do the check after you open the PR. See [candidate checks](../skills/ship-change/references/verification.md) for clean commit checks and test resources.
+
+A request to "ship" gives approval to open one PR for the task or update its existing PR. If the user specifies a smaller scope, stay in that scope. If a step cannot start, use a safe alternative that the rules let you use. If there is no such alternative, continue other work in the approved scope. Before external operations, examine scripts and remote triggers for effects outside the approved scope. Get approval for effects outside that scope. Get approval for merge and deployment. Do the applicable [delivery steps](../skills/ship-change/SKILL.md#4-deliver-the-result). Give the user the revision, review result, check results, and missing evidence.
+
+See [specialist selection](../skills/ship-change/references/specialist-routing.md).
+
+If the repository and user let you, use [ASD-STE100 Issue 9](../skills/ship-change/references/technical-english.md) for new or changed English technical text. Keep the specified templates, commands, names, and quotations.
 
 ## 5. Update or remove copies
 

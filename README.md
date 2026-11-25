@@ -1,6 +1,6 @@
 # Ship a change
 
-`ship-change` is an agent skill for implementing, reviewing, verifying, and delivering a repository change. It uses each repository's instructions, scripts, hooks, and CI. In BB, the parent thread coordinates the work.
+`ship-change` is an agent skill for implementing, reviewing, verifying, and delivering a repository change. It uses each repository's instructions, scripts, hooks, and CI.
 
 ## One-line installation
 
@@ -46,7 +46,9 @@ Choose one installer for each installation. The [full guide](docs/guide.md#alter
 
 ## How it works
 
-The skill turns the request into acceptance criteria, makes the change, checks the integrated branch, and delivers it through the last authorized step. A coordinator can split independent tasks between workers. When the repo or the risk calls for independent review, a separate reviewer checks the integrated change against the request and repo rules. See the [delivery workflow](docs/guide.md#delivery-workflow).
+One coordinator manages the change on one branch. The coordinator can make the change without workers. If the coordinator uses workers, each worker gets one task with acceptance criteria.
+
+Before you open a pull request (PR), complete independent review. This rule also applies to draft PRs. After the applicable review and corrections, do the full set of necessary repository checks once on the last integrated revision. Do the [repository checks](skills/ship-change/SKILL.md#repository-checks) in the specified sequence. A request to "ship" gives approval to open one PR for the task or update its existing PR. If the user specifies a smaller scope, stay in that scope. See the [delivery workflow](docs/guide.md#delivery-workflow).
 
 ## Contributing
 
@@ -59,4 +61,4 @@ npm pack --dry-run
 
 Tests use disposable temporary projects. They check installer behavior; they do not prove agent behavior in every harness. See [design decisions and primary sources](docs/research.md). Licensed under [MIT](LICENSE).
 
-Use ASD-STE100 Issue 9 when you change the skills. Check the approved words, technical terms, and sentence rules against the [writing reference](skills/ship-change/references/technical-english.md).
+Use ASD-STE100 Issue 9 for new or changed English text that agents write in this repository. Before delivery, examine the changed text. See the [repository writing rules](AGENTS.md).
