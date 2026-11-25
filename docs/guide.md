@@ -82,7 +82,7 @@ Codex and OpenCode share a single copy. OpenCode also reads Claude-compatible di
 
 ## 4. Use ship-change
 
-Clients that allow automatic skill activation may choose `ship-change` for matching delivery requests. To select it yourself, ask, “Use ship-change to implement this fix and prepare a verified PR.”
+Clients that allow automatic skill activation may choose `ship-change` for matching delivery requests. To select it yourself, ask, “Use ship-change to implement this fix and prepare a verified pull request.”
 
 ### Delivery workflow
 
@@ -104,7 +104,7 @@ If the revision or test inputs change, do these steps.
 
 If a PR is necessary for a check, do the check after you open the PR. See [candidate checks](../skills/ship-change/references/verification.md) for clean commit checks and test resources.
 
-If PR creation has approval and the task has no PR, open one after the applicable reviews and checks. If a PR update has approval and the task has a PR, update it after the applicable reviews and checks. Before external operations, examine scripts and remote triggers for effects on other systems. If the user gave standing approval for usual pushes and PRs, use it within the approved scope. Get approval for effects outside the approved scope. Get approval for merge and deployment. Give the user the revision, review result, check results, and missing evidence.
+A request to ship gives approval for the usual safe steps through one PR. If the user specifies a smaller scope, stay in that scope. If a step cannot start, use a safe alternative or continue other work in scope. Before external operations, examine scripts and remote triggers for effects outside the approved scope. Get approval for effects outside that scope. Get approval for merge and deployment. Follow the [delivery steps](../skills/ship-change/SKILL.md#4-deliver-the-result). Give the user the revision, review result, check results, and missing evidence.
 
 See [specialist selection](../skills/ship-change/references/specialist-routing.md).
 

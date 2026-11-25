@@ -48,7 +48,7 @@ Choose one installer for each installation. The [full guide](docs/guide.md#alter
 
 One coordinator manages the change on one branch. The coordinator can make the change without workers. If the coordinator uses workers, each worker gets one task with acceptance criteria.
 
-Before you open a pull request (PR), complete independent review. This rule also applies to draft PRs. After the applicable review and corrections, do the full set of necessary repository checks once on the last integrated revision. Follow the [repository check sequence](skills/ship-change/SKILL.md#repository-checks). If PR creation has approval and the task has no PR, open one after the applicable reviews and checks. If a PR update has approval and the task has a PR, update it after the applicable reviews and checks. See the [delivery workflow](docs/guide.md#delivery-workflow).
+Before you open a pull request (PR), complete independent review. This rule also applies to draft PRs. After the applicable review and corrections, do the full set of necessary repository checks once on the last integrated revision. Follow the [repository check sequence](skills/ship-change/SKILL.md#repository-checks). A request to ship gives approval for the usual safe steps through one PR. If the user specifies a smaller scope, stay in that scope. If a PR is in scope, open one for the full task or update its existing PR. See the [delivery workflow](docs/guide.md#delivery-workflow).
 
 ## Contributing
 
@@ -61,4 +61,4 @@ npm pack --dry-run
 
 Tests use disposable temporary projects. They check installer behavior; they do not prove agent behavior in every harness. See [design decisions and primary sources](docs/research.md). Licensed under [MIT](LICENSE).
 
-Use ASD-STE100 Issue 9 when you change the skills. Check the approved words, technical terms, and sentence rules against the [writing reference](skills/ship-change/references/technical-english.md).
+Use ASD-STE100 Issue 9 for new or changed English text that agents write in this repository. Before delivery, check the changed text. See the [repository writing rules](AGENTS.md).
