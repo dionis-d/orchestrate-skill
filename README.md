@@ -46,9 +46,9 @@ Choose one installer for each installation. The [full guide](docs/guide.md#alter
 
 ## How it works
 
-Use the request and repository rules to set the acceptance criteria. Find the approved delivery steps. Do focused checks during implementation. If the repository rules or risk make independent review necessary, get independent review.
+One coordinator manages the change on one branch. The coordinator can do the implementation without workers. If the coordinator uses workers, each worker gets one task with acceptance criteria.
 
-In BB, the parent thread gives one task with acceptance criteria to each implementation child thread. Workers do independent tasks at the same time in isolated workspaces. The parent thread integrates the changes on one branch. An independent reviewer checks the integrated change in a different thread before any pull request (PR). This rule also applies to draft PRs. After review and corrections, the parent thread does the necessary checks once on the last PR revision. If PR creation has approval, the parent thread uses one PR for the full task. See the [delivery workflow](docs/guide.md#delivery-workflow).
+Before you open a pull request (PR), complete independent review. This rule also applies to draft PRs. After the applicable review and corrections, the coordinator does the necessary checks once on the last integrated revision. If PR creation has approval, the coordinator uses one PR for the full task. See the [delivery workflow](docs/guide.md#delivery-workflow).
 
 ## Contributing
 
