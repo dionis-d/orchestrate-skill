@@ -1,6 +1,6 @@
 # Ship a change
 
-`ship-change` is an agent skill for implementing, reviewing, verifying, and delivering a repository change. It uses each repository's instructions, scripts, hooks, and CI. In BB, the parent thread coordinates the work.
+`ship-change` is an agent skill for implementing, reviewing, verifying, and delivering a repository change. It uses each repository's instructions, scripts, hooks, and CI.
 
 ## One-line installation
 
@@ -46,7 +46,9 @@ Choose one installer for each installation. The [full guide](docs/guide.md#alter
 
 ## How it works
 
-The skill turns the request into acceptance criteria, makes the change, checks the integrated branch, and delivers it through the last authorized step. A coordinator can split independent tasks between workers. When the repo or the risk calls for independent review, a separate reviewer checks the integrated change against the request and repo rules. See the [delivery workflow](docs/guide.md#delivery-workflow).
+Use the request and repository rules to set the acceptance criteria and find the approved delivery steps. Use focused checks during implementation. Use independent review when the repository rules or risk make it necessary.
+
+In BB, the parent thread assigns one task with acceptance criteria to each implementation child thread. It runs independent tasks in parallel in isolated workspaces. It integrates the changes on one branch. A separate reviewer checks the integrated change before any PR, including a draft PR. After review and corrections, the parent thread runs the required checks once for the final PR revision. It uses one PR for the assignment when PR creation has approval. See the [delivery workflow](docs/guide.md#delivery-workflow).
 
 ## Contributing
 

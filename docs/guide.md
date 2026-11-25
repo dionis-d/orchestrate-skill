@@ -86,16 +86,20 @@ Clients that allow automatic skill activation may choose `ship-change` for match
 
 ### Delivery workflow
 
-1. Set the scope from the request and repository instructions. Find the base revision, acceptance criteria, and authorized delivery steps. Discover checks from project scripts, hooks, and CI.
-2. Make the change and run focused checks. When the coordinator delegates, each worker gets one task and a separate writable workspace for parallel work.
-3. Review the integrated change against the request and repository rules. Use independent review when required by the repository or risk. Run the required checks on the integrated candidate and reuse evidence that the repository accepts for that candidate.
-4. Deliver through the authorized step. Use one PR for the integrated change when a PR is in scope. Report the revision, review, check results, and any missing evidence.
+1. Set the scope from the request and repository instructions. Find the base revision, acceptance criteria, and approved delivery steps. Identify checks in project scripts, hooks, and CI.
+2. Make the change. Run focused checks. If the coordinator delegates, give each worker one task with acceptance criteria. Use isolated writable workspaces for parallel tasks. Integrate the changes on one branch. Each worker reports the revision, focused checks, results, and missing evidence.
+3. Review the integrated change against the request and repository rules. Use independent review when the repository rules or risk make it necessary. Reuse evidence that meets the requirements for the step, candidate, scope, inputs, and environment.
+4. Deliver through the last approved step. Report the revision, review result, check results, and missing evidence.
 
-In BB, the parent thread coordinates integration, final checks, and delivery. On other clients, the active project workflow or session can coordinate. Use any suitable specialist already available in the client for an unassigned phase.
+In BB, the parent thread owns integration, final checks, and delivery. It assigns one task with acceptance criteria to each implementation child thread. It runs independent tasks in parallel. A separate reviewer examines the integrated diff and how the changes work together before any PR, including a draft PR.
 
-The project specifies when checks must pass. Reuse evidence only when the project accepts it for the candidate and environment. The [candidate checks](../skills/ship-change/references/verification.md) describe what to do if a project requires a test on a clean commit before opening a PR.
+In BB, the reviewer gives one report with all findings that need action. Each finding gives the expected behavior and a check for the correction. If possible, use a focused check that fails before the correction and passes after it. The reviewer examines the corrections and all other edits since the last review. The review includes the behavior that these edits can change. If an earlier conclusion changes, increase the review scope. Continue until the review has no findings that need action.
 
-Use disposable test resources. Examine scripts and remote triggers before actions that can affect other systems. Get approval for merge and deployment.
+In BB, run the full set of required repository checks once on the final PR revision after review and corrections. Run checks that require a PR after you open it. If the revision or test inputs change, repeat the affected checks and any checks that the repository rules require. See [candidate checks](../skills/ship-change/references/verification.md) for clean commit checks and test resources.
+
+Use one PR for the full parent assignment in BB. Use standing approval for routine pushes and PRs if the user gave it. Examine scripts and remote triggers before operations that can affect other systems. Get approval for effects outside the approved scope. Get approval for merge and deployment.
+
+On other clients, the active project workflow or session can coordinate the work. Use a specialist that is available in the client for an unassigned phase.
 
 Use [ASD-STE100 Issue 9](../skills/ship-change/references/technical-english.md) for new or changed English technical text when the repository and user permit it. Keep required templates, commands, names, and quotations.
 
